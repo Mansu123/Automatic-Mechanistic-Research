@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.DS_Store
+
+# model weights are downloaded to ~/.cache/huggingface, never into this repo,
+# but these patterns are here defensively in case anything gets saved locally
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.gguf
+*.ckpt
+
+# local venvs, if anyone creates one here
+.venv/
+venv/

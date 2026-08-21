@@ -1,0 +1,49 @@
+{
+  "target_model_id": "gpt2",
+  "backend_kind": "heuristic",
+  "flagged_layers": [
+    0,
+    1,
+    2,
+    3,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "claimed_heads": [
+    [
+      9,
+      9
+    ],
+    [
+      10,
+      10
+    ]
+  ],
+  "ground_truth_valid": true,
+  "layer_localization_recall": 1.0,
+  "circuit_recall": 0.1111111111111111,
+  "circuit_precision": 0.5,
+  "judge_verdict": "Refuted",
+  "negative_controls_refuted": 4,
+  "negative_controls_total": 4,
+  "tool_calls_spent": 45,
+  "cache_hit_rate": 0.0,
+  "per_layer_fraction_recovered": {
+    "0": -0.0,
+    "1": -0.0,
+    "2": -0.0,
+    "3": -0.0,
+    "5": 0.0,
+    "6": -0.0,
+    "7": 0.06,
+    "8": 0.14,
+    "9": 0.45,
+    "10": 0.94,
+    "11": 1.0
+  }
+}

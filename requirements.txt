@@ -1,0 +1,12 @@
+torch>=2.1
+transformers>=4.40
+scikit-learn>=1.3
+numpy>=1.24
+scipy>=1.10
+matplotlib>=3.7    # only needed for --graph
+
+# optional, only needed for the corresponding LLM_BACKEND:
+# accelerate           # AMI_LLM_BACKEND=hf_local on GPU / multi-device
+# bitsandbytes         # AMI_LLM_BACKEND=hf_local with 4-bit quantization
+# openai               # AMI_LLM_BACKEND=openai
+# anthropic            # AMI_LLM_BACKEND=anthropic
