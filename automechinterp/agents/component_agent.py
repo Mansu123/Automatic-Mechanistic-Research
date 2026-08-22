@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from ..llm_backends import make_backend
 from ..tools import adapter, tier_c
+from ..tools import sae as _sae
 from .base import Agent, ToolCallBudget, LOG
 
 
@@ -56,7 +57,18 @@ def build_component_agent(handle: adapter.ModelHandle, layer_idx: int,
         state["attention_digest"] = digest
         return digest
 
+    def do_sae_decompose():
+        digest = tier_c.run_sae_decompose(handle, layer_idx, clean_prompt, token_idx=-1)
+        state["sae_decompose_digest"] = digest
+        LOG.emit("ComponentAgent", f"L{layer_idx}: gives the causally-important head semantic "
+                                     "content (which SAE features it correlates with), not just an "
+                                     "effect size")
+        return digest
+
     tools = {"run_eap": do_eap, "run_acdc": do_acdc, "get_attention_pattern": do_attention_pattern}
+    sae_available = _sae.supports_sae(handle.model_id)
+    if sae_available:
+        tools["run_sae_decompose"] = do_sae_decompose
 
     def policy_fn(evidence_text: str, tool_menu: list[str]) -> dict:
         if "eap_digest" not in state:
@@ -67,11 +79,14 @@ def build_component_agent(handle: adapter.ModelHandle, layer_idx: int,
         if "attention_digest" not in state and state.get("circuit"):
             return {"action": "get_attention_pattern", "args": {},
                      "reasoning": "inspect what the surviving head actually attends to before hypothesizing"}
+        if sae_available and "sae_decompose_digest" not in state and state.get("circuit"):
+            return {"action": "run_sae_decompose", "args": {},
+                     "reasoning": "give the finding semantic content via sparse feature decomposition"}
         return {"action": "stop", "args": {}, "reasoning": "component analysis complete"}
 
     kwargs = backend_kwargs or {}
     backend = make_backend(backend_kind, policy_fn=policy_fn, **kwargs)
-    agent = Agent(backend, tools, budget, max_steps=4)
+    agent = Agent(backend, tools, budget, max_steps=5)
     agent.name = f"ComponentAgent{layer_idx}"
     agent.system_prompt = (
         f"You are the Component Agent for layer {layer_idx}. Find which specific attention heads "

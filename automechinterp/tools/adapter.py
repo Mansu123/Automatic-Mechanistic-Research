@@ -238,6 +238,48 @@ def swap_layer(handle: ModelHandle, layer_i: int, layer_j: int, run_fn: Callable
             "delta": swapped - baseline}
 
 
+def _get_layer_container(handle: ModelHandle):
+    """Walks layer_stack_path to the actual nn.ModuleList living inside
+    handle.model (e.g. model.transformer.h) -- distinct from handle.layers,
+    which is a plain Python list snapshot. transplant_layer() has to mutate
+    the real container, not the snapshot, or the forward pass won't see it."""
+    obj = handle.model
+    for part in handle.layer_stack_path.split("."):
+        obj = getattr(obj, part)
+    return obj
+
+
+def transplant_layer(target_handle: ModelHandle, source_handle: ModelHandle, layer_idx: int,
+                      run_fn: Callable[[], float]) -> dict:
+    """Tool: transplant_layer() (Sec. 4.5 point 3, Stage C). Temporarily
+    substitutes layer `layer_idx`'s actual WEIGHTS (the whole nn.Module, not
+    just its runtime activation -- distinct from swap_layer(), which swaps
+    activations within one model) from source_handle into target_handle,
+    runs run_fn(), then restores the original. Requires both models to share
+    the same layer-stack shape (same architecture) -- true for a base/
+    fine-tuned pair by construction, since fine-tuning doesn't change
+    architecture."""
+    assert target_handle.n_layers == source_handle.n_layers, \
+        "transplant_layer requires both models to have the same layer count (same architecture)"
+    baseline = run_fn()
+
+    container = _get_layer_container(target_handle)
+    original_module = container[layer_idx]
+    source_module = source_handle.layers[layer_idx]
+
+    with MODEL_LOCK:
+        container[layer_idx] = source_module
+        target_handle.layers[layer_idx] = source_module
+        try:
+            transplanted = run_fn()
+        finally:
+            container[layer_idx] = original_module
+            target_handle.layers[layer_idx] = original_module
+
+    return {"layer": layer_idx, "baseline": baseline, "transplanted": transplanted,
+            "delta": transplanted - baseline}
+
+
 def freeze_and_probe(acts: np.ndarray, labels: np.ndarray, test_size: float = 0.3, seed: int = 0) -> dict:
     """Tool: freeze_and_probe(). Linear probe (logistic regression) on frozen
     activations; returns concept decodability at that depth."""

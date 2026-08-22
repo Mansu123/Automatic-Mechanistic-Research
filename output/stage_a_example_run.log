@@ -31,10 +31,10 @@ Related-work gaps this run is designed to close (Sec. 2 of the proposal):
   closed by  : tools/adapter.py discovers the layer stack via named_modules() with no transformer-specific import required; verified against both a GPT-2 (transformer.h) and a Qwen2/Llama-family (model.layers) module layout in this codebase.
 
 ==============================================================================
-STAGE A -- Ground-Truth Validation (GPT-2 small, IOI task)
+STAGE A -- Ground-Truth Validation (gpt2, IOI task)
 ==============================================================================
 Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 4104.83it/s]
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 8524.31it/s]
 [System] registered gpt2: 12 layers via 'transformer.h'
 [System] IOI probe: 'When Bob and Tom went to the store, Bob gave a drink to' -> expect 'Tom' over 'Bob'
 [Orchestrator] delegating stage-0 profiling to Network Analyst (backend=heuristic)
@@ -44,57 +44,71 @@ Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF
 [NetworkAnalyst] redundancy_scan_flagged -> redundancy_scan (|delta| from skip-ablating each layer): peak 11=3.574; 11/12 points >= 0.05 -> [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11]
 [NetworkAnalyst] stop (stage-0 profiling complete)
 [Orchestrator] spawning Layer Agents in parallel for flagged layers [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11]
-[LayerAgent1] patch_layer -> patch_layer L1: fraction_recovered=-0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.18)
-[LayerAgent] [single-agent-context-dilution] L1: patch recovered only -0.00 of the gap -> not load-bearing, skipping deeper analysis
-[LayerAgent1] stop (low causal effect, no deeper analysis needed)
-[LayerAgent5] patch_layer -> patch_layer L5: fraction_recovered=0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.16)
-[LayerAgent] [single-agent-context-dilution] L5: patch recovered only 0.00 of the gap -> not load-bearing, skipping deeper analysis
-[LayerAgent5] stop (low causal effect, no deeper analysis needed)
-[LayerAgent8] patch_layer -> patch_layer L8: fraction_recovered=0.14 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-2.21)
-[LayerAgent] [single-agent-context-dilution] L8: patch recovered only 0.14 of the gap -> not load-bearing, skipping deeper analysis
-[LayerAgent8] stop (low causal effect, no deeper analysis needed)
-[LayerAgent11] patch_layer -> patch_layer L11: fraction_recovered=1.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=3.67)
-[LayerAgent3] patch_layer -> patch_layer L3: fraction_recovered=-0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.18)
-[LayerAgent] [single-agent-context-dilution] L3: patch recovered only -0.00 of the gap -> not load-bearing, skipping deeper analysis
-[LayerAgent3] stop (low causal effect, no deeper analysis needed)
 [LayerAgent0] patch_layer -> patch_layer L0: fraction_recovered=-0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.17)
 [LayerAgent] [single-agent-context-dilution] L0: patch recovered only -0.00 of the gap -> not load-bearing, skipping deeper analysis
 [LayerAgent0] stop (low causal effect, no deeper analysis needed)
-[LayerAgent11] attn_mlp_attribution -> attn_mlp_attribution L11: attn=88%, mlp=12%
+[LayerAgent5] patch_layer -> patch_layer L5: fraction_recovered=0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.16)
+[LayerAgent] [single-agent-context-dilution] L5: patch recovered only 0.00 of the gap -> not load-bearing, skipping deeper analysis
+[LayerAgent5] stop (low causal effect, no deeper analysis needed)
 [LayerAgent7] patch_layer -> patch_layer L7: fraction_recovered=0.06 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-2.73)
 [LayerAgent] [single-agent-context-dilution] L7: patch recovered only 0.06 of the gap -> not load-bearing, skipping deeper analysis
 [LayerAgent7] stop (low causal effect, no deeper analysis needed)
-[LayerAgent11] logit_lens -> logit_lens L11: top-5 = [(' Tom', -77.58), (' the', -78.94), (' them', -79.47), (' a', -79.89), (' his', -80.02)]
-[LayerAgent11] stop (layer diagnosis complete)
-[LayerAgent6] patch_layer -> patch_layer L6: fraction_recovered=-0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.18)
-[LayerAgent] [single-agent-context-dilution] L6: patch recovered only -0.00 of the gap -> not load-bearing, skipping deeper analysis
-[LayerAgent6] stop (low causal effect, no deeper analysis needed)
-[LayerAgent9] patch_layer -> patch_layer L9: fraction_recovered=0.45 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-0.06)
 [LayerAgent10] patch_layer -> patch_layer L10: fraction_recovered=0.94 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=3.29)
-[LayerAgent9] attn_mlp_attribution -> attn_mlp_attribution L9: attn=36%, mlp=64%
+[LayerAgent1] patch_layer -> patch_layer L1: fraction_recovered=-0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.18)
+[LayerAgent] [single-agent-context-dilution] L1: patch recovered only -0.00 of the gap -> not load-bearing, skipping deeper analysis
+[LayerAgent1] stop (low causal effect, no deeper analysis needed)
+[LayerAgent8] patch_layer -> patch_layer L8: fraction_recovered=0.14 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-2.21)
+[LayerAgent] [single-agent-context-dilution] L8: patch recovered only 0.14 of the gap -> not load-bearing, skipping deeper analysis
+[LayerAgent8] stop (low causal effect, no deeper analysis needed)
 [LayerAgent2] patch_layer -> patch_layer L2: fraction_recovered=-0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.19)
 [LayerAgent] [single-agent-context-dilution] L2: patch recovered only -0.00 of the gap -> not load-bearing, skipping deeper analysis
 [LayerAgent2] stop (low causal effect, no deeper analysis needed)
-[LayerAgent9] logit_lens -> logit_lens L9: top-5 = [(' Tom', -8.49), (' everyone', -15.84), (' Tommy', -16.44), (' them', -16.85), (' the', -16.97)]
-[LayerAgent9] stop (layer diagnosis complete)
+[LayerAgent6] patch_layer -> patch_layer L6: fraction_recovered=-0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.18)
+[LayerAgent] [single-agent-context-dilution] L6: patch recovered only -0.00 of the gap -> not load-bearing, skipping deeper analysis
+[LayerAgent6] stop (low causal effect, no deeper analysis needed)
 [LayerAgent10] attn_mlp_attribution -> attn_mlp_attribution L10: attn=21%, mlp=79%
+[LayerAgent3] patch_layer -> patch_layer L3: fraction_recovered=-0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.18)
+[LayerAgent] [single-agent-context-dilution] L3: patch recovered only -0.00 of the gap -> not load-bearing, skipping deeper analysis
+[LayerAgent3] stop (low causal effect, no deeper analysis needed)
+[LayerAgent9] patch_layer -> patch_layer L9: fraction_recovered=0.45 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-0.06)
+[LayerAgent11] patch_layer -> patch_layer L11: fraction_recovered=1.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=3.67)
+[LayerAgent9] attn_mlp_attribution -> attn_mlp_attribution L9: attn=36%, mlp=64%
+[LayerAgent11] attn_mlp_attribution -> attn_mlp_attribution L11: attn=88%, mlp=12%
+/Users/mansuba/Library/Python/3.11/lib/python/site-packages/sae_lens/saes/sae.py:254: UserWarning: 
+This SAE has non-empty model_from_pretrained_kwargs. 
+For optimal performance, load the model like so:
+model = HookedSAETransformer.from_pretrained_no_processing(..., **cfg.model_from_pretrained_kwargs)
+  warnings.warn(
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 18778.95it/s]
+Loaded pretrained model gpt2 into HookedTransformer
+[LayerAgent10] sae_layer_profile -> sae_layer_profile L10 (gpt2-small-res-jb): FVU=0.0000 (lower=better reconstruction), L0=51.1 active features/token of 24576 -> sparse / interpretable
+[LayerAgent9] sae_layer_profile -> sae_layer_profile L9 (gpt2-small-res-jb): FVU=0.0000 (lower=better reconstruction), L0=59.2 active features/token of 24576 -> sparse / interpretable
 [LayerAgent10] logit_lens -> logit_lens L10: top-5 = [(' Tom', -40.7), (' them', -46.02), (' the', -46.08), (' his', -47.05), (' everyone', -47.72)]
 [LayerAgent10] stop (layer diagnosis complete)
-[Orchestrator] attention-driven effect found at layers [11, 9, 10]; spawning Component Agents
-[ComponentAgent11] run_eap -> top-8 head (EAP linear-approx score) by |effect|: L11H10: -1.534; L11H1: -0.203; L11H6: -0.113; L11H2: -0.083; L11H11: -0.034; L11H0: +0.026; L11H3: +0.019; L11H5: +0.018
-[ComponentAgent9] run_eap -> top-8 head (EAP linear-approx score) by |effect|: L9H9: +2.221; L9H4: -0.175; L9H7: -0.058; L9H8: +0.048; L9H6: -0.040; L9H1: +0.022; L9H0: -0.022; L9H5: -0.018
+[LayerAgent9] logit_lens -> logit_lens L9: top-5 = [(' Tom', -8.49), (' everyone', -15.84), (' Tommy', -16.44), (' them', -16.85), (' the', -16.97)]
+[LayerAgent9] stop (layer diagnosis complete)
+[LayerAgent11] sae_layer_profile -> sae_layer_profile L11 (gpt2-small-res-jb): FVU=0.0000 (lower=better reconstruction), L0=48.1 active features/token of 24576 -> sparse / interpretable
+[LayerAgent11] logit_lens -> logit_lens L11: top-5 = [(' Tom', -77.58), (' the', -78.94), (' them', -79.47), (' a', -79.89), (' his', -80.02)]
+[LayerAgent11] stop (layer diagnosis complete)
+[Orchestrator] attention-driven effect found at layers [10, 9, 11]; spawning Component Agents
 [ComponentAgent10] run_eap -> top-8 head (EAP linear-approx score) by |effect|: L10H7: -1.752; L10H10: +1.489; L10H0: +0.374; L10H6: +0.357; L10H1: +0.258; L10H3: -0.040; L10H2: +0.039; L10H5: -0.016
+[ComponentAgent9] run_eap -> top-8 head (EAP linear-approx score) by |effect|: L9H9: +2.221; L9H4: -0.175; L9H7: -0.058; L9H8: +0.048; L9H6: -0.040; L9H1: +0.022; L9H0: -0.022; L9H5: -0.018
+[ComponentAgent11] run_eap -> top-8 head (EAP linear-approx score) by |effect|: L11H10: -1.534; L11H1: -0.203; L11H6: -0.113; L11H2: -0.083; L11H11: -0.034; L11H0: +0.026; L11H3: +0.019; L11H5: +0.018
+[ComponentAgent] [sasc-noninteractive] L10: exact ACDC sweep confirms/refines the cheap EAP estimate instead of trusting it -> circuit=[(10, 10)]
+[ComponentAgent10] run_acdc -> top-8 head (fraction of gap recovered) by |effect|: L10H7: -0.272; L10H10: +0.203; L10H0: +0.055; L10H6: +0.052; L10H1: +0.037; L10H3: -0.006; L10H2: +0.006; L10H5: -0.002 | circuit(threshold=0.1)=[(10, 10)]
 [ComponentAgent] [sasc-noninteractive] L9: exact ACDC sweep confirms/refines the cheap EAP estimate instead of trusting it -> circuit=[(9, 9)]
 [ComponentAgent9] run_acdc -> top-8 head (fraction of gap recovered) by |effect|: L9H9: +0.291; L9H4: -0.024; L9H7: -0.009; L9H8: +0.007; L9H6: -0.006; L9H1: +0.003; L9H0: -0.003; L9H5: -0.003 | circuit(threshold=0.1)=[(9, 9)]
 [ComponentAgent] [sasc-noninteractive] L11: exact ACDC sweep confirms/refines the cheap EAP estimate instead of trusting it -> circuit=[]
 [ComponentAgent11] run_acdc -> top-8 head (fraction of gap recovered) by |effect|: L11H10: -0.223; L11H1: -0.030; L11H6: -0.016; L11H2: -0.012; L11H11: -0.005; L11H0: +0.004; L11H3: +0.003; L11H5: +0.003 | circuit(threshold=0.1)=[]
 [ComponentAgent11] stop (component analysis complete)
-[ComponentAgent9] get_attention_pattern -> L9H9: 4% attention mass -> token[1] as seen from token[13]
-[ComponentAgent9] stop (component analysis complete)
-[ComponentAgent] [sasc-noninteractive] L10: exact ACDC sweep confirms/refines the cheap EAP estimate instead of trusting it -> circuit=[(10, 10)]
-[ComponentAgent10] run_acdc -> top-8 head (fraction of gap recovered) by |effect|: L10H7: -0.272; L10H10: +0.203; L10H0: +0.055; L10H6: +0.052; L10H1: +0.037; L10H3: -0.006; L10H2: +0.006; L10H5: -0.002 | circuit(threshold=0.1)=[(10, 10)]
 [ComponentAgent10] get_attention_pattern -> L10H10: 9% attention mass -> token[1] as seen from token[13]
+[ComponentAgent9] get_attention_pattern -> L9H9: 4% attention mass -> token[1] as seen from token[13]
+[ComponentAgent] L10: gives the causally-important head semantic content (which SAE features it correlates with), not just an effect size
+[ComponentAgent10] run_sae_decompose -> run_sae_decompose L10 token[14]: top active features (id, activation) = [(16421, 24.473), (8695, 20.582), (6101, 16.225), (10547, 13.046), (24324, 11.005)]
 [ComponentAgent10] stop (component analysis complete)
+[ComponentAgent] L9: gives the causally-important head semantic content (which SAE features it correlates with), not just an effect size
+[ComponentAgent9] run_sae_decompose -> run_sae_decompose L9 token[14]: top active features (id, activation) = [(24120, 14.657), (1721, 9.667), (20971, 9.08), (19301, 8.494), (18642, 8.152)]
+[ComponentAgent9] stop (component analysis complete)
 [Orchestrator] sending claim [(9, 9), (10, 10)] to Skeptic
 [Skeptic] ablate_component -> ablate_component L9H9 (mean): avg_delta=+0.192 over 6 prompts -> weak/no effect | ablate_component L10H10 (mean): avg_delta=-0.130 over 6 prompts -> weak/no effect
 [Skeptic] [maia-confirmation-bias] ablation showed no specific effect -- refuting early instead of running the full falsification suite on a claim already dead
@@ -132,5 +146,8 @@ Circuit recall            : 11%
 Circuit precision         : 50%
 Judge verdict on claim    : Refuted -- ablating the claimed circuit did not produce a specific effect
 Negative controls refuted : 4/4 (false-confirmation rate 0%)
-Tool calls spent          : 45 / 120
+Tool calls spent          : 50 / 120
 Cache hit rate            : 0% (0 hits / 1 misses)
+
+Saved graph -> output/stage_a_gpt2_20260822_124005.png
+Saved raw results -> output/stage_a_gpt2_20260822_124005.json

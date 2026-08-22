@@ -14,3 +14,9 @@ __pycache__/
 # local venvs, if anyone creates one here
 .venv/
 venv/
+
+# finetune_stand_in.py saves to ~/.cache/automechinterp/ by default, outside
+# this repo -- this entry is defensive only, in case that default is ever
+# pointed at a path inside the project
+.cache/
+gpt2-biomedical-stand-in/

@@ -8,8 +8,17 @@ from __future__ import annotations
 
 import torch
 
-from . import adapter
+from . import adapter, sae as _sae
 from .digest import metric_delta_digest
+
+
+def sae_layer_profile(handle: adapter.ModelHandle, layer_idx: int, texts: list[str]) -> str:
+    """Tool: sae_layer_profile(). Per-layer SAE reconstruction loss & feature
+    density -- maps where superposition is worst, so the Layer Agent knows
+    whether a Component Agent will need run_sae_decompose (Tier C) to make
+    sense of this layer, or whether individual heads are already
+    monosemantic enough that circuit discovery alone will be interpretable."""
+    return _sae.sae_layer_profile(layer_idx, texts, model_id=handle.model_id, device=handle.device)
 
 
 def logit_lens(handle: adapter.ModelHandle, layer_idx: int, prompt: str, top_k: int = 5) -> str:

@@ -1,0 +1,325 @@
+{
+  "target_model_id": "gpt2",
+  "n_layers": 12,
+  "behaviors": [
+    "Indirect Object Identification (coreference)",
+    "Subject-verb number agreement (syntax)",
+    "Factual recall: country capitals (world knowledge)",
+    "Antonym prediction (lexical semantics)"
+  ],
+  "per_behavior_results": [
+    {
+      "behavior": "Indirect Object Identification (coreference)",
+      "category": "coreference",
+      "flagged_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "claimed_heads": [
+        [
+          9,
+          9
+        ],
+        [
+          10,
+          10
+        ]
+      ],
+      "verdict": "Refuted",
+      "tool_calls_spent": 52
+    },
+    {
+      "behavior": "Subject-verb number agreement (syntax)",
+      "category": "syntactic_agreement",
+      "flagged_layers": [
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "claimed_heads": [
+        [
+          7,
+          4
+        ],
+        [
+          8,
+          5
+        ],
+        [
+          11,
+          10
+        ]
+      ],
+      "verdict": "Refuted",
+      "tool_calls_spent": 63
+    },
+    {
+      "behavior": "Factual recall: country capitals (world knowledge)",
+      "category": "factual_recall",
+      "flagged_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "claimed_heads": [
+        [
+          9,
+          8
+        ],
+        [
+          11,
+          2
+        ]
+      ],
+      "verdict": "Probable",
+      "tool_calls_spent": 50
+    },
+    {
+      "behavior": "Antonym prediction (lexical semantics)",
+      "category": "lexical_semantics",
+      "flagged_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "claimed_heads": [
+        [
+          9,
+          7
+        ]
+      ],
+      "verdict": "Confirmed",
+      "tool_calls_spent": 49
+    }
+  ],
+  "layer_atlas": {
+    "0": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals (world knowledge)",
+        "Antonym prediction (lexical semantics)"
+      ],
+      "n_behaviors_flagged": 4,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 4/4, no circuit survived)"
+    },
+    "1": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals (world knowledge)",
+        "Antonym prediction (lexical semantics)"
+      ],
+      "n_behaviors_flagged": 4,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 4/4, no circuit survived)"
+    },
+    "2": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Factual recall: country capitals (world knowledge)",
+        "Antonym prediction (lexical semantics)"
+      ],
+      "n_behaviors_flagged": 3,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 3/4, no circuit survived)"
+    },
+    "3": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals (world knowledge)",
+        "Antonym prediction (lexical semantics)"
+      ],
+      "n_behaviors_flagged": 4,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 4/4, no circuit survived)"
+    },
+    "4": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals (world knowledge)",
+        "Antonym prediction (lexical semantics)"
+      ],
+      "n_behaviors_flagged": 4,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 4/4, no circuit survived)"
+    },
+    "5": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals (world knowledge)",
+        "Antonym prediction (lexical semantics)"
+      ],
+      "n_behaviors_flagged": 4,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 4/4, no circuit survived)"
+    },
+    "6": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals (world knowledge)",
+        "Antonym prediction (lexical semantics)"
+      ],
+      "n_behaviors_flagged": 4,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 4/4, no circuit survived)"
+    },
+    "7": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals (world knowledge)",
+        "Antonym prediction (lexical semantics)"
+      ],
+      "n_behaviors_flagged": 4,
+      "circuits_by_behavior": {
+        "Subject-verb number agreement (syntax)": [
+          [
+            7,
+            4
+          ]
+        ]
+      },
+      "role_hypothesis": "specialized -- circuit found only for 'Subject-verb number agreement (syntax)'"
+    },
+    "8": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals (world knowledge)",
+        "Antonym prediction (lexical semantics)"
+      ],
+      "n_behaviors_flagged": 4,
+      "circuits_by_behavior": {
+        "Subject-verb number agreement (syntax)": [
+          [
+            8,
+            5
+          ]
+        ]
+      },
+      "role_hypothesis": "specialized -- circuit found only for 'Subject-verb number agreement (syntax)'"
+    },
+    "9": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals (world knowledge)",
+        "Antonym prediction (lexical semantics)"
+      ],
+      "n_behaviors_flagged": 4,
+      "circuits_by_behavior": {
+        "Indirect Object Identification (coreference)": [
+          [
+            9,
+            9
+          ]
+        ],
+        "Factual recall: country capitals (world knowledge)": [
+          [
+            9,
+            8
+          ]
+        ],
+        "Antonym prediction (lexical semantics)": [
+          [
+            9,
+            7
+          ]
+        ]
+      },
+      "role_hypothesis": "shared circuit layer -- found for 3/4 behaviors: ['Antonym prediction (lexical semantics)', 'Factual recall: country capitals (world knowledge)', 'Indirect Object Identification (coreference)']"
+    },
+    "10": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals (world knowledge)",
+        "Antonym prediction (lexical semantics)"
+      ],
+      "n_behaviors_flagged": 4,
+      "circuits_by_behavior": {
+        "Indirect Object Identification (coreference)": [
+          [
+            10,
+            10
+          ]
+        ]
+      },
+      "role_hypothesis": "specialized -- circuit found only for 'Indirect Object Identification (coreference)'"
+    },
+    "11": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals (world knowledge)",
+        "Antonym prediction (lexical semantics)"
+      ],
+      "n_behaviors_flagged": 4,
+      "circuits_by_behavior": {
+        "Subject-verb number agreement (syntax)": [
+          [
+            11,
+            10
+          ]
+        ],
+        "Factual recall: country capitals (world knowledge)": [
+          [
+            11,
+            2
+          ]
+        ]
+      },
+      "role_hypothesis": "shared circuit layer -- found for 2/4 behaviors: ['Factual recall: country capitals (world knowledge)', 'Subject-verb number agreement (syntax)']"
+    }
+  },
+  "pairwise_consistency_iou": {
+    "Indirect Object Identification (coreference) vs Subject-verb number agreement (syntax)": 0.9166666666666666,
+    "Indirect Object Identification (coreference) vs Factual recall: country capitals (world knowledge)": 1.0,
+    "Indirect Object Identification (coreference) vs Antonym prediction (lexical semantics)": 1.0,
+    "Subject-verb number agreement (syntax) vs Factual recall: country capitals (world knowledge)": 0.9166666666666666,
+    "Subject-verb number agreement (syntax) vs Antonym prediction (lexical semantics)": 0.9166666666666666,
+    "Factual recall: country capitals (world knowledge) vs Antonym prediction (lexical semantics)": 1.0
+  }
+}

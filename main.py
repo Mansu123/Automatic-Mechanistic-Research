@@ -57,6 +57,15 @@ def main():
                          help="save a PNG + JSON of the results to --output-dir")
     parser.add_argument("--output-dir", default="output",
                          help="directory for --graph output (default: output)")
+    parser.add_argument("--ablations", action="store_true",
+                         help="run Sec. 4.7 ablation studies (hierarchy, verification, Network "
+                              "Analyst flagging strategy) instead of Stage A, and exit")
+    parser.add_argument("--stage-b", action="store_true",
+                         help="run Stage B (Sec. 4.4): multi-behavior Layer Atlas, instead of "
+                              "Stage A, and exit")
+    parser.add_argument("--stage-c", action="store_true",
+                         help="run Stage C (Sec. 4.5): cross-model layer diff against a locally "
+                              "fine-tuned biomedical stand-in, instead of Stage A, and exit")
     args = parser.parse_args()
 
     if args.gap_matrix:
@@ -65,6 +74,18 @@ def main():
 
     if args.smoke_test_qwen:
         _smoke_test_qwen()
+        return
+
+    if args.ablations:
+        _run_ablations(args.graph, args.output_dir)
+        return
+
+    if args.stage_b:
+        _run_stage_b(args.backend or config.LLM_BACKEND, args.graph, args.output_dir)
+        return
+
+    if args.stage_c:
+        _run_stage_c(args.graph, args.output_dir)
         return
 
     print("Related-work gaps this run is designed to close (Sec. 2 of the proposal):\n")
@@ -84,6 +105,53 @@ def main():
     if args.graph:
         from automechinterp.visualize import plot_stage_a_results
         png_path, json_path = plot_stage_a_results(output, backend_kind, out_dir=args.output_dir)
+        print(f"\nSaved graph -> {png_path}")
+        print(f"Saved raw results -> {json_path}")
+
+
+def _run_stage_c(graph: bool, output_dir: str):
+    from automechinterp.stage_c import run_stage_c
+    result = run_stage_c()
+    if graph:
+        from automechinterp.visualize import plot_stage_c_results
+        png_path, json_path = plot_stage_c_results(result, out_dir=output_dir)
+        print(f"\nSaved graph -> {png_path}")
+        print(f"Saved raw results -> {json_path}")
+
+
+def _run_stage_b(backend_kind: str, graph: bool, output_dir: str):
+    from automechinterp.stage_b import run_stage_b
+    result = run_stage_b(backend_kind=backend_kind)
+    if graph:
+        from automechinterp.visualize import plot_stage_b_results
+        png_path, json_path = plot_stage_b_results(result, out_dir=output_dir)
+        print(f"\nSaved graph -> {png_path}")
+        print(f"Saved raw results -> {json_path}")
+
+
+def _run_ablations(graph: bool, output_dir: str):
+    from automechinterp.ablations import run_all_ablations
+    print("Running Sec. 4.7 ablation studies on GPT-2...\n")
+    result = run_all_ablations()
+
+    h, v, n = result["hierarchy_ablation"], result["verification_ablation"], result["network_analyst_ablation"]
+    print("\n" + "-" * 78)
+    print("ABLATION RESULTS")
+    print("-" * 78)
+    print(f"Hierarchy ablation        : {h['context_reduction_factor']:.2f}x context reduction "
+          f"(flat={h['flat_total_context_chars']} chars vs hierarchical max="
+          f"{h['hierarchical_max_agent_context_chars']} chars, over {h['n_layers_checked']} layers)")
+    print(f"Verification ablation     : self-confirmation false-confirmation rate="
+          f"{v['self_confirmation_false_confirmation_rate']:.0%} vs Prover-Skeptic-Judge="
+          f"{v['prover_skeptic_judge_false_confirmation_rate']:.0%} (n={v['n_claims']} known-wrong claims)")
+    print(f"Network Analyst ablation  : layer-localization recall -- guided="
+          f"{n['layer_localization_recall']['guided']:.0%}, uniform="
+          f"{n['layer_localization_recall']['uniform']:.0%}, random_avg="
+          f"{n['layer_localization_recall']['random_avg']:.0%}")
+
+    if graph:
+        from automechinterp.visualize import plot_ablations
+        png_path, json_path = plot_ablations(result, out_dir=output_dir)
         print(f"\nSaved graph -> {png_path}")
         print(f"Saved raw results -> {json_path}")
 

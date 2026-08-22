@@ -12,8 +12,17 @@ from __future__ import annotations
 
 import torch
 
-from . import adapter
+from . import adapter, sae as _sae
 from .digest import topk_digest
+
+
+def run_sae_decompose(handle: adapter.ModelHandle, layer_idx: int, text: str, token_idx: int = -1) -> str:
+    """Tool: run_sae_decompose(). Sparse interpretable feature directions for
+    a flagged activation -- gives semantic content to a causally-important
+    head/circuit ("L9H9 matters" -> "L9H9's output correlates with SAE
+    features {...}"), not just its causal effect size."""
+    return _sae.run_sae_decompose(layer_idx, text, token_idx=token_idx,
+                                   model_id=handle.model_id, device=handle.device)
 
 
 def _ioi_metric_fn(handle, io_token: str, s_token: str):

@@ -1,0 +1,55 @@
+{
+  "base_model_id": "gpt2",
+  "finetuned_model_path": "/Users/mansuba/.cache/automechinterp/gpt2-biomedical-stand-in",
+  "n_layers": 12,
+  "layer_ckas": [
+    0.9905114769935608,
+    0.9804671406745911,
+    0.9835520386695862,
+    0.9904676079750061,
+    0.9891960024833679,
+    0.987028181552887,
+    0.9778746962547302,
+    0.9790323972702026,
+    0.9768990278244019,
+    0.97637939453125,
+    0.9351081252098083,
+    0.7562406659126282
+  ],
+  "change_loci": [
+    11,
+    10,
+    9
+  ],
+  "base_capability": 6.157106399536133,
+  "finetuned_capability": 17.76278305053711,
+  "capability_gap": 11.605676651000977,
+  "transplant_results": [
+    {
+      "layer": 11,
+      "cka": 0.7562406659126282,
+      "baseline": 6.157106399536133,
+      "transplanted": 7.293241500854492,
+      "delta": 1.1361351013183594,
+      "fraction_of_gap_transferred": 0.09789477472822483
+    },
+    {
+      "layer": 10,
+      "cka": 0.9351081252098083,
+      "baseline": 6.157106399536133,
+      "transplanted": 7.506599426269531,
+      "delta": 1.3494930267333984,
+      "fraction_of_gap_transferred": 0.11627870285503829
+    },
+    {
+      "layer": 9,
+      "cka": 0.97637939453125,
+      "baseline": 6.157106399536133,
+      "transplanted": 7.319889068603516,
+      "delta": 1.1627826690673828,
+      "fraction_of_gap_transferred": 0.1001908552197251
+    }
+  ],
+  "control_layer": 0,
+  "control_fraction_transferred": 0.009851238767554843
+}

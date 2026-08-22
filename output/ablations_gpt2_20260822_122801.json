@@ -1,0 +1,110 @@
+{
+  "target_model_id": "gpt2",
+  "hierarchy_ablation": {
+    "n_layers_checked": 12,
+    "flat_total_context_chars": 1665,
+    "flat_tool_calls": 15,
+    "flat_context_after_n_layers": [
+      122,
+      244,
+      366,
+      488,
+      610,
+      731,
+      853,
+      974,
+      1095,
+      1283,
+      1474,
+      1665
+    ],
+    "hierarchical_max_agent_context_chars": 482,
+    "hierarchical_tool_calls": 33,
+    "hierarchical_max_context_after_n_layers": [
+      119,
+      119,
+      119,
+      119,
+      119,
+      119,
+      119,
+      119,
+      119,
+      481,
+      482,
+      482
+    ],
+    "context_reduction_factor": 3.454356846473029
+  },
+  "verification_ablation": {
+    "n_claims": 4,
+    "self_confirmation_false_confirmation_rate": 1.0,
+    "prover_skeptic_judge_false_confirmation_rate": 0.0,
+    "details": [
+      {
+        "claim": [
+          0,
+          0
+        ],
+        "verdict": "Refuted",
+        "correctly_refuted": true
+      },
+      {
+        "claim": [
+          1,
+          7
+        ],
+        "verdict": "Refuted",
+        "correctly_refuted": true
+      },
+      {
+        "claim": [
+          1,
+          2
+        ],
+        "verdict": "Refuted",
+        "correctly_refuted": true
+      },
+      {
+        "claim": [
+          1,
+          9
+        ],
+        "verdict": "Refuted",
+        "correctly_refuted": true
+      }
+    ]
+  },
+  "network_analyst_ablation": {
+    "n_layers_flagged": {
+      "guided": 11,
+      "uniform": 12,
+      "random": 11
+    },
+    "layer_localization_recall": {
+      "guided": 1.0,
+      "uniform": 1.0,
+      "random_avg": 0.96
+    },
+    "random_trial_recalls": [
+      1.0,
+      1.0,
+      1.0,
+      0.8,
+      1.0
+    ],
+    "guided_flagged_layers": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ]
+  }
+}

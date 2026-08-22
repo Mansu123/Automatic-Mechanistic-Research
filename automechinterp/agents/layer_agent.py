@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from ..llm_backends import make_backend
 from ..tools import adapter, tier_l
+from ..tools import sae as _sae
 from .base import Agent, ToolCallBudget, LOG
 
 
@@ -41,11 +42,24 @@ def build_layer_agent(handle: adapter.ModelHandle, layer_idx: int,
         state["logit_lens_digest"] = digest
         return digest
 
+    def do_sae_profile():
+        digest = tier_l.sae_layer_profile(handle, layer_idx, [clean_prompt, corrupted_prompt])
+        state["sae_profile_digest"] = digest
+        l0 = float(digest.split("L0=")[1].split(" ")[0])
+        state["high_superposition"] = l0 > 100.0
+        if state["high_superposition"]:
+            LOG.emit("LayerAgent", f"L{layer_idx}: L0={l0:.0f} active SAE features/token -> high "
+                                     "superposition; flagging for run_sae_decompose downstream")
+        return digest
+
     tools = {
         "patch_layer": do_patch_layer,
         "attn_mlp_attribution": do_attribution,
         "logit_lens": do_logit_lens,
     }
+    sae_available = _sae.supports_sae(handle.model_id)
+    if sae_available:
+        tools["sae_layer_profile"] = do_sae_profile
 
     def policy_fn(evidence_text: str, tool_menu: list[str]) -> dict:
         if "patch_digest" not in state:
@@ -58,13 +72,16 @@ def build_layer_agent(handle: adapter.ModelHandle, layer_idx: int,
         if "attribution_digest" not in state:
             return {"action": "attn_mlp_attribution", "args": {},
                      "reasoning": "layer is causally load-bearing; decompose attn vs mlp"}
+        if sae_available and "sae_profile_digest" not in state:
+            return {"action": "sae_layer_profile", "args": {},
+                     "reasoning": "check superposition before circuit interpretation (Sec. 5.2 mitigation)"}
         if "logit_lens_digest" not in state:
             return {"action": "logit_lens", "args": {}, "reasoning": "check whether this layer is a write-out layer"}
         return {"action": "stop", "args": {}, "reasoning": "layer diagnosis complete"}
 
     kwargs = backend_kwargs or {}
     backend = make_backend(backend_kind, policy_fn=policy_fn, **kwargs)
-    agent = Agent(backend, tools, budget, max_steps=4)
+    agent = Agent(backend, tools, budget, max_steps=5)
     agent.name = f"LayerAgent{layer_idx}"
     agent.system_prompt = (
         f"You are the Layer Agent for layer {layer_idx}. Diagnose whether this layer causally "
