@@ -81,7 +81,8 @@ def main():
         return
 
     if args.stage_b:
-        _run_stage_b(args.backend or config.LLM_BACKEND, args.graph, args.output_dir)
+        _run_stage_b(args.backend or config.LLM_BACKEND, args.target_model or config.TARGET_MODEL_ID,
+                     args.graph, args.output_dir)
         return
 
     if args.stage_c:
@@ -119,9 +120,9 @@ def _run_stage_c(graph: bool, output_dir: str):
         print(f"Saved raw results -> {json_path}")
 
 
-def _run_stage_b(backend_kind: str, graph: bool, output_dir: str):
+def _run_stage_b(backend_kind: str, target_model_id: str, graph: bool, output_dir: str):
     from automechinterp.stage_b import run_stage_b
-    result = run_stage_b(backend_kind=backend_kind)
+    result = run_stage_b(backend_kind=backend_kind, target_model_id=target_model_id)
     if graph:
         from automechinterp.visualize import plot_stage_b_results
         png_path, json_path = plot_stage_b_results(result, out_dir=output_dir)

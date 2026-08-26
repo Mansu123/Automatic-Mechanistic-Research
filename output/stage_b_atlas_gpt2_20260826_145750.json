@@ -1,0 +1,908 @@
+{
+  "target_model_id": "gpt2",
+  "n_layers": 28,
+  "behaviors": [
+    "Indirect Object Identification (coreference)",
+    "Subject-verb number agreement (syntax)",
+    "Factual recall: country capitals",
+    "Arithmetic: single-digit addition",
+    "Reasoning: magnitude comparison",
+    "Induction: repeated token copying",
+    "Social Bias: gender-occupation stereotype",
+    "Lexical Semantics: antonym prediction",
+    "Lexical Semantics: category membership"
+  ],
+  "per_behavior_results": [
+    {
+      "behavior": "Indirect Object Identification (coreference)",
+      "category": "Angle 1: Linguistic",
+      "flagged_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "claimed_heads": [
+        [
+          24,
+          8
+        ],
+        [
+          24,
+          10
+        ]
+      ],
+      "verdict": "Confirmed",
+      "tool_calls_spent": 76
+    },
+    {
+      "behavior": "Subject-verb number agreement (syntax)",
+      "category": "Angle 1: Linguistic",
+      "flagged_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        18,
+        19,
+        20,
+        21,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "claimed_heads": [
+        [
+          21,
+          7
+        ],
+        [
+          24,
+          0
+        ]
+      ],
+      "verdict": "Probable",
+      "tool_calls_spent": 82
+    },
+    {
+      "behavior": "Factual recall: country capitals",
+      "category": "Angle 2: Factual",
+      "flagged_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "claimed_heads": [
+        [
+          22,
+          6
+        ],
+        [
+          23,
+          5
+        ]
+      ],
+      "verdict": "Probable",
+      "tool_calls_spent": 87
+    },
+    {
+      "behavior": "Arithmetic: single-digit addition",
+      "category": "Angle 3: Arithmetic",
+      "flagged_layers": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "claimed_heads": [],
+      "verdict": null,
+      "tool_calls_spent": 23
+    },
+    {
+      "behavior": "Reasoning: magnitude comparison",
+      "category": "Angle 3: Arithmetic",
+      "flagged_layers": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "claimed_heads": [],
+      "verdict": null,
+      "tool_calls_spent": 23
+    },
+    {
+      "behavior": "Induction: repeated token copying",
+      "category": "Angle 4: Induction",
+      "flagged_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "claimed_heads": [],
+      "verdict": null,
+      "tool_calls_spent": 120
+    },
+    {
+      "behavior": "Social Bias: gender-occupation stereotype",
+      "category": "Angle 5: Social Bias",
+      "flagged_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "claimed_heads": [
+        [
+          13,
+          7
+        ],
+        [
+          21,
+          7
+        ],
+        [
+          23,
+          10
+        ]
+      ],
+      "verdict": "Refuted",
+      "tool_calls_spent": 99
+    },
+    {
+      "behavior": "Lexical Semantics: antonym prediction",
+      "category": "Angle 6: Lexical Semantics",
+      "flagged_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        24,
+        25,
+        26,
+        27
+      ],
+      "claimed_heads": [
+        [
+          20,
+          2
+        ],
+        [
+          20,
+          4
+        ],
+        [
+          21,
+          0
+        ],
+        [
+          22,
+          8
+        ]
+      ],
+      "verdict": "Refuted",
+      "tool_calls_spent": 114
+    },
+    {
+      "behavior": "Lexical Semantics: category membership",
+      "category": "Angle 6: Lexical Semantics",
+      "flagged_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "claimed_heads": [
+        [
+          20,
+          11
+        ],
+        [
+          21,
+          0
+        ],
+        [
+          22,
+          6
+        ],
+        [
+          23,
+          3
+        ],
+        [
+          23,
+          5
+        ]
+      ],
+      "verdict": "Refuted",
+      "tool_calls_spent": 93
+    }
+  ],
+  "layer_atlas": {
+    "0": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Arithmetic: single-digit addition",
+        "Reasoning: magnitude comparison",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 9,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 9/9, no circuit survived)"
+    },
+    "1": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Arithmetic: single-digit addition",
+        "Reasoning: magnitude comparison",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 9,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 9/9, no circuit survived)"
+    },
+    "2": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Arithmetic: single-digit addition",
+        "Reasoning: magnitude comparison",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 9,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 9/9, no circuit survived)"
+    },
+    "3": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Arithmetic: single-digit addition",
+        "Reasoning: magnitude comparison",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 9,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 9/9, no circuit survived)"
+    },
+    "4": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 7/9, no circuit survived)"
+    },
+    "5": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 7/9, no circuit survived)"
+    },
+    "6": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 7/9, no circuit survived)"
+    },
+    "7": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 7/9, no circuit survived)"
+    },
+    "8": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 7/9, no circuit survived)"
+    },
+    "9": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 6,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 6/9, no circuit survived)"
+    },
+    "10": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 6,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 6/9, no circuit survived)"
+    },
+    "11": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 7/9, no circuit survived)"
+    },
+    "12": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction"
+      ],
+      "n_behaviors_flagged": 6,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 6/9, no circuit survived)"
+    },
+    "13": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {
+        "Social Bias: gender-occupation stereotype": [
+          [
+            13,
+            7
+          ]
+        ]
+      },
+      "role_hypothesis": "specialized -- circuit found only for 'Social Bias: gender-occupation stereotype'"
+    },
+    "14": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 7/9, no circuit survived)"
+    },
+    "15": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 7/9, no circuit survived)"
+    },
+    "16": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 7/9, no circuit survived)"
+    },
+    "17": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 5,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 5/9, no circuit survived)"
+    },
+    "18": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 6,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 6/9, no circuit survived)"
+    },
+    "19": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction"
+      ],
+      "n_behaviors_flagged": 6,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 6/9, no circuit survived)"
+    },
+    "20": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {
+        "Lexical Semantics: antonym prediction": [
+          [
+            20,
+            2
+          ],
+          [
+            20,
+            4
+          ]
+        ],
+        "Lexical Semantics: category membership": [
+          [
+            20,
+            11
+          ]
+        ]
+      },
+      "role_hypothesis": "shared circuit layer -- found for 2/9 behaviors: ['Lexical Semantics: antonym prediction', 'Lexical Semantics: category membership']"
+    },
+    "21": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {
+        "Subject-verb number agreement (syntax)": [
+          [
+            21,
+            7
+          ]
+        ],
+        "Social Bias: gender-occupation stereotype": [
+          [
+            21,
+            7
+          ]
+        ],
+        "Lexical Semantics: antonym prediction": [
+          [
+            21,
+            0
+          ]
+        ],
+        "Lexical Semantics: category membership": [
+          [
+            21,
+            0
+          ]
+        ]
+      },
+      "role_hypothesis": "shared circuit layer -- found for 4/9 behaviors: ['Lexical Semantics: antonym prediction', 'Lexical Semantics: category membership', 'Social Bias: gender-occupation stereotype', 'Subject-verb number agreement (syntax)']"
+    },
+    "22": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Factual recall: country capitals",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 5,
+      "circuits_by_behavior": {
+        "Factual recall: country capitals": [
+          [
+            22,
+            6
+          ]
+        ],
+        "Lexical Semantics: antonym prediction": [
+          [
+            22,
+            8
+          ]
+        ],
+        "Lexical Semantics: category membership": [
+          [
+            22,
+            6
+          ]
+        ]
+      },
+      "role_hypothesis": "shared circuit layer -- found for 3/9 behaviors: ['Factual recall: country capitals', 'Lexical Semantics: antonym prediction', 'Lexical Semantics: category membership']"
+    },
+    "23": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 6,
+      "circuits_by_behavior": {
+        "Factual recall: country capitals": [
+          [
+            23,
+            5
+          ]
+        ],
+        "Social Bias: gender-occupation stereotype": [
+          [
+            23,
+            10
+          ]
+        ],
+        "Lexical Semantics: category membership": [
+          [
+            23,
+            3
+          ],
+          [
+            23,
+            5
+          ]
+        ]
+      },
+      "role_hypothesis": "shared circuit layer -- found for 3/9 behaviors: ['Factual recall: country capitals', 'Lexical Semantics: category membership', 'Social Bias: gender-occupation stereotype']"
+    },
+    "24": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {
+        "Indirect Object Identification (coreference)": [
+          [
+            24,
+            8
+          ],
+          [
+            24,
+            10
+          ]
+        ],
+        "Subject-verb number agreement (syntax)": [
+          [
+            24,
+            0
+          ]
+        ]
+      },
+      "role_hypothesis": "shared circuit layer -- found for 2/9 behaviors: ['Indirect Object Identification (coreference)', 'Subject-verb number agreement (syntax)']"
+    },
+    "25": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 7/9, no circuit survived)"
+    },
+    "26": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 7/9, no circuit survived)"
+    },
+    "27": {
+      "flagged_by_behaviors": [
+        "Indirect Object Identification (coreference)",
+        "Subject-verb number agreement (syntax)",
+        "Factual recall: country capitals",
+        "Induction: repeated token copying",
+        "Social Bias: gender-occupation stereotype",
+        "Lexical Semantics: antonym prediction",
+        "Lexical Semantics: category membership"
+      ],
+      "n_behaviors_flagged": 7,
+      "circuits_by_behavior": {},
+      "role_hypothesis": "no confirmed circuit at this layer (investigated by 7/9, no circuit survived)"
+    }
+  },
+  "pairwise_consistency_iou": {
+    "Indirect Object Identification (coreference) vs Subject-verb number agreement (syntax)": 0.8571428571428571,
+    "Indirect Object Identification (coreference) vs Factual recall: country capitals": 1.0,
+    "Indirect Object Identification (coreference) vs Arithmetic: single-digit addition": 0.14285714285714285,
+    "Indirect Object Identification (coreference) vs Reasoning: magnitude comparison": 0.14285714285714285,
+    "Indirect Object Identification (coreference) vs Induction: repeated token copying": 0.9642857142857143,
+    "Indirect Object Identification (coreference) vs Social Bias: gender-occupation stereotype": 0.9285714285714286,
+    "Indirect Object Identification (coreference) vs Lexical Semantics: antonym prediction": 0.9642857142857143,
+    "Indirect Object Identification (coreference) vs Lexical Semantics: category membership": 0.9285714285714286,
+    "Subject-verb number agreement (syntax) vs Factual recall: country capitals": 0.8571428571428571,
+    "Subject-verb number agreement (syntax) vs Arithmetic: single-digit addition": 0.16666666666666666,
+    "Subject-verb number agreement (syntax) vs Reasoning: magnitude comparison": 0.16666666666666666,
+    "Subject-verb number agreement (syntax) vs Induction: repeated token copying": 0.8888888888888888,
+    "Subject-verb number agreement (syntax) vs Social Bias: gender-occupation stereotype": 0.8518518518518519,
+    "Subject-verb number agreement (syntax) vs Lexical Semantics: antonym prediction": 0.8214285714285714,
+    "Subject-verb number agreement (syntax) vs Lexical Semantics: category membership": 0.7857142857142857,
+    "Factual recall: country capitals vs Arithmetic: single-digit addition": 0.14285714285714285,
+    "Factual recall: country capitals vs Reasoning: magnitude comparison": 0.14285714285714285,
+    "Factual recall: country capitals vs Induction: repeated token copying": 0.9642857142857143,
+    "Factual recall: country capitals vs Social Bias: gender-occupation stereotype": 0.9285714285714286,
+    "Factual recall: country capitals vs Lexical Semantics: antonym prediction": 0.9642857142857143,
+    "Factual recall: country capitals vs Lexical Semantics: category membership": 0.9285714285714286,
+    "Arithmetic: single-digit addition vs Reasoning: magnitude comparison": 1.0,
+    "Arithmetic: single-digit addition vs Induction: repeated token copying": 0.14814814814814814,
+    "Arithmetic: single-digit addition vs Social Bias: gender-occupation stereotype": 0.15384615384615385,
+    "Arithmetic: single-digit addition vs Lexical Semantics: antonym prediction": 0.14814814814814814,
+    "Arithmetic: single-digit addition vs Lexical Semantics: category membership": 0.15384615384615385,
+    "Reasoning: magnitude comparison vs Induction: repeated token copying": 0.14814814814814814,
+    "Reasoning: magnitude comparison vs Social Bias: gender-occupation stereotype": 0.15384615384615385,
+    "Reasoning: magnitude comparison vs Lexical Semantics: antonym prediction": 0.14814814814814814,
+    "Reasoning: magnitude comparison vs Lexical Semantics: category membership": 0.15384615384615385,
+    "Induction: repeated token copying vs Social Bias: gender-occupation stereotype": 0.8928571428571429,
+    "Induction: repeated token copying vs Lexical Semantics: antonym prediction": 0.9285714285714286,
+    "Induction: repeated token copying vs Lexical Semantics: category membership": 0.8928571428571429,
+    "Social Bias: gender-occupation stereotype vs Lexical Semantics: antonym prediction": 0.8928571428571429,
+    "Social Bias: gender-occupation stereotype vs Lexical Semantics: category membership": 0.8571428571428571,
+    "Lexical Semantics: antonym prediction vs Lexical Semantics: category membership": 0.8928571428571429
+  }
+}

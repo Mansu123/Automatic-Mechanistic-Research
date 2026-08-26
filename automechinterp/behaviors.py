@@ -1,29 +1,38 @@
-"""Behavior definitions for Stage B (Sec. 4.4: "Behavior suite... across
-factual recall, arithmetic, syntactic agreement, and hallucination triggers").
+"""Behavior definitions for Stage B across all 6 cognitive & mechanistic angles.
 
-Every behavior returns a task dict shaped exactly like stage_a.build_ioi_task's
-output -- {clean_prompt, corrupted_prompt, io_token, s_token, eval_prompts,
-probe_texts, task_metric_fn, n_heads, behavior} -- because the whole hierarchy
-(hierarchy.py, every Tier N/L/C/V tool) is already generic to "predict the
-correct token over a specific wrong token given a clean/corrupted prompt
-pair"; IOI was never a special case, just the first instance. That genericity
-is what makes a multi-behavior Layer Atlas possible without new plumbing.
+Angles:
+  1. Linguistic Structure (Syntax & Coreference)
+  2. Factual & World Knowledge
+  3. Reasoning & Arithmetic
+  4. In-Context Learning / Induction
+  5. Social Bias & Fairness
+  6. Lexical Semantics & Word Sense
 
-Scaled down from the proposal's 24 tasks to 4 -- one per category named in
-Sec. 4.4 -- to keep a full Stage B run fast enough to actually execute here;
-the categories are real and distinct, not padding.
+Every behavior returns a standard task dictionary:
+  {
+    "behavior": str,
+    "category": str,
+    "clean_prompt": str,
+    "corrupted_prompt": str,
+    "io_token": str,
+    "s_token": str,
+    "eval_prompts": list,
+    "probe_texts": list,
+    "task_metric_fn": Callable,
+    "n_heads": int
+  }
 """
 from __future__ import annotations
 
 import random
+from typing import Callable
 
 import torch
-
 from .tools import adapter
 
 
 def _make_task(handle: adapter.ModelHandle, behavior: str, category: str,
-                pair_generator, n_eval: int = 4, seed: int = 0) -> dict:
+                pair_generator: Callable, n_eval: int = 4, seed: int = 0) -> dict:
     rng = random.Random(seed)
     clean_prompt, corrupted_prompt, io_token, s_token = pair_generator(rng)
     eval_prompts = [(clean_prompt, io_token, s_token)]
@@ -35,8 +44,8 @@ def _make_task(handle: adapter.ModelHandle, behavior: str, category: str,
         total = 0.0
         for prompt, io_t, s_t in eval_prompts:
             batch = handle.tokenizer([prompt], return_tensors="pt").to(handle.device)
-            io_id = handle.tokenizer.encode(" " + io_t)[0]
-            s_id = handle.tokenizer.encode(" " + s_t)[0]
+            io_id = handle.tokenizer.encode(" " + io_t.strip())[0]
+            s_id = handle.tokenizer.encode(" " + s_t.strip())[0]
             with torch.no_grad():
                 logits = handle.model(**batch).logits[0, -1]
             total += (logits[io_id] - logits[s_id]).item()
@@ -46,15 +55,23 @@ def _make_task(handle: adapter.ModelHandle, behavior: str, category: str,
     n_heads = getattr(handle.model.config, "num_attention_heads", None) or handle.model.config.n_head
 
     return {
-        "behavior": behavior, "category": category,
-        "clean_prompt": clean_prompt, "corrupted_prompt": corrupted_prompt,
-        "io_token": io_token, "s_token": s_token,
-        "eval_prompts": eval_prompts, "probe_texts": probe_texts,
-        "task_metric_fn": task_metric_fn, "n_heads": n_heads,
+        "behavior": behavior,
+        "category": category,
+        "clean_prompt": clean_prompt,
+        "corrupted_prompt": corrupted_prompt,
+        "io_token": io_token,
+        "s_token": s_token,
+        "eval_prompts": eval_prompts,
+        "probe_texts": probe_texts,
+        "task_metric_fn": task_metric_fn,
+        "n_heads": n_heads,
     }
 
 
-# -- IOI (coreference / entity tracking) -------------------------------------
+# ============================================================================
+# ANGLE 1: Linguistic Structure & Syntax
+# ============================================================================
+
 _IOI_TEMPLATE = "When {A} and {B} went to the store, {S} gave a drink to"
 _IOI_NAMES = ["John", "Mary", "Alice", "Bob", "Sarah", "Tom"]
 
@@ -65,10 +82,9 @@ def ioi_behavior(handle: adapter.ModelHandle, seed: int = 0) -> dict:
         clean = _IOI_TEMPLATE.format(A=a, B=b, S=a)
         corrupted = _IOI_TEMPLATE.format(A=b, B=a, S=b)
         return clean, corrupted, b, a
-    return _make_task(handle, "Indirect Object Identification (coreference)", "coreference", gen, seed=seed)
+    return _make_task(handle, "Indirect Object Identification (coreference)", "Angle 1: Linguistic", gen, seed=seed)
 
 
-# -- Subject-verb number agreement (syntactic) -------------------------------
 _AGREEMENT_PAIRS = [
     ("key", "keys", "cabinet", "cabinets"), ("dog", "dogs", "yard", "yards"),
     ("student", "students", "classroom", "classrooms"), ("book", "books", "shelf", "shelves"),
@@ -78,17 +94,21 @@ _AGREEMENT_PAIRS = [
 def agreement_behavior(handle: adapter.ModelHandle, seed: int = 0) -> dict:
     def gen(rng):
         sg, pl, dist_sg, dist_pl = rng.choice(_AGREEMENT_PAIRS)
-        # clean: plural subject, singular distractor noun in the relative clause -> "are" is correct
         clean = f"The {pl} to the {dist_sg}"
-        # corrupted: singular subject, plural distractor -> "is" is correct instead
         corrupted = f"The {sg} to the {dist_pl}"
         return clean, corrupted, "are", "is"
-    return _make_task(handle, "Subject-verb number agreement (syntax)", "syntactic_agreement", gen, seed=seed)
+    return _make_task(handle, "Subject-verb number agreement (syntax)", "Angle 1: Linguistic", gen, seed=seed)
 
 
-# -- Factual recall (world knowledge) ----------------------------------------
-_CAPITALS = [("France", "Paris", "London"), ("England", "London", "Paris"),
-             ("Italy", "Rome", "Madrid"), ("Spain", "Madrid", "Rome")]
+# ============================================================================
+# ANGLE 2: Factual & World Knowledge
+# ============================================================================
+
+_CAPITALS = [
+    ("France", "Paris", "London"), ("England", "London", "Paris"),
+    ("Italy", "Rome", "Madrid"), ("Spain", "Madrid", "Rome"),
+    ("Germany", "Berlin", "Paris"), ("Japan", "Tokyo", "Beijing")
+]
 
 
 def factual_recall_behavior(handle: adapter.ModelHandle, seed: int = 0) -> dict:
@@ -98,12 +118,100 @@ def factual_recall_behavior(handle: adapter.ModelHandle, seed: int = 0) -> dict:
         other_country, other_capital, _ = rng.choice([c for c in _CAPITALS if c[0] != country])
         corrupted = f"The capital of {other_country} is"
         return clean, corrupted, capital, wrong
-    return _make_task(handle, "Factual recall: country capitals (world knowledge)", "factual_recall", gen, seed=seed)
+    return _make_task(handle, "Factual recall: country capitals", "Angle 2: Factual", gen, seed=seed)
 
 
-# -- Antonym prediction (lexical semantics) ----------------------------------
-_ANTONYMS = [("hot", "cold", "warm"), ("big", "small", "large"),
-             ("fast", "slow", "quick"), ("light", "dark", "bright")]
+# ============================================================================
+# ANGLE 3: Reasoning & Arithmetic
+# ============================================================================
+
+_ADDITION_CASES = [
+    (3, 4, 7, 8, 2, 5),
+    (2, 5, 7, 6, 3, 4),
+    (1, 8, 9, 8, 4, 5),
+    (4, 5, 9, 7, 1, 8),
+    (2, 3, 5, 6, 6, 2),
+    (6, 2, 8, 7, 2, 3),
+]
+
+
+def arithmetic_addition_behavior(handle: adapter.ModelHandle, seed: int = 0) -> dict:
+    def gen(rng):
+        a, b, ans, wrong, c, d = rng.choice(_ADDITION_CASES)
+        clean = f"The sum of {a} and {b} is"
+        corrupted = f"The sum of {c} and {d} is"
+        return clean, corrupted, str(ans), str(wrong)
+    return _make_task(handle, "Arithmetic: single-digit addition", "Angle 3: Arithmetic", gen, seed=seed)
+
+
+_MAGNITUDE_CASES = [
+    (8, 3, "8", "3"),
+    (9, 2, "9", "2"),
+    (7, 4, "7", "4"),
+    (6, 1, "6", "1"),
+]
+
+
+def magnitude_comparison_behavior(handle: adapter.ModelHandle, seed: int = 0) -> dict:
+    def gen(rng):
+        big, small, ans, wrong = rng.choice(_MAGNITUDE_CASES)
+        clean = f"Between {big} and {small}, the larger number is"
+        corrupted = f"Between {big} and {small}, the smaller number is"
+        return clean, corrupted, ans, wrong
+    return _make_task(handle, "Reasoning: magnitude comparison", "Angle 3: Arithmetic", gen, seed=seed)
+
+
+# ============================================================================
+# ANGLE 4: In-Context Learning / Induction
+# ============================================================================
+
+_REPEATED_SEQUENCES = [
+    (["red", "blue", "green"], "red", "blue"),
+    (["apple", "banana", "cherry"], "apple", "banana"),
+    (["cat", "dog", "fox"], "cat", "dog"),
+    (["alpha", "beta", "gamma"], "alpha", "beta"),
+]
+
+
+def induction_copying_behavior(handle: adapter.ModelHandle, seed: int = 0) -> dict:
+    def gen(rng):
+        seq, first, second = rng.choice(_REPEATED_SEQUENCES)
+        clean = f"{seq[0]} {seq[1]} {seq[2]} {seq[0]}"
+        corrupted = f"{seq[0]} {seq[1]} {seq[2]} {seq[1]}"
+        return clean, corrupted, second, first
+    return _make_task(handle, "Induction: repeated token copying", "Angle 4: Induction", gen, seed=seed)
+
+
+# ============================================================================
+# ANGLE 5: Social Bias & Fairness
+# ============================================================================
+
+_GENDER_OCCUPATIONS = [
+    ("nurse", "she", "he", "doctor"),
+    ("secretary", "she", "he", "manager"),
+    ("engineer", "he", "she", "designer"),
+    ("surgeon", "he", "she", "patient"),
+]
+
+
+def gender_bias_behavior(handle: adapter.ModelHandle, seed: int = 0) -> dict:
+    def gen(rng):
+        occ, stereo, anti, other_occ = rng.choice(_GENDER_OCCUPATIONS)
+        clean = f"The {occ} went to work because"
+        corrupted = f"The {other_occ} went to work because"
+        return clean, corrupted, stereo, anti
+    return _make_task(handle, "Social Bias: gender-occupation stereotype", "Angle 5: Social Bias", gen, seed=seed)
+
+
+# ============================================================================
+# ANGLE 6: Lexical Semantics & Word Sense
+# ============================================================================
+
+_ANTONYMS = [
+    ("hot", "cold", "warm"), ("big", "small", "large"),
+    ("fast", "slow", "quick"), ("light", "dark", "bright"),
+    ("rich", "poor", "wealthy"), ("early", "late", "soon")
+]
 
 
 def antonym_behavior(handle: adapter.ModelHandle, seed: int = 0) -> dict:
@@ -113,7 +221,40 @@ def antonym_behavior(handle: adapter.ModelHandle, seed: int = 0) -> dict:
         other_word, other_antonym, _ = rng.choice([a for a in _ANTONYMS if a[0] != word])
         corrupted = f"The opposite of {other_word} is"
         return clean, corrupted, antonym, near_synonym
-    return _make_task(handle, "Antonym prediction (lexical semantics)", "lexical_semantics", gen, seed=seed)
+    return _make_task(handle, "Lexical Semantics: antonym prediction", "Angle 6: Lexical Semantics", gen, seed=seed)
 
 
-ALL_BEHAVIORS = [ioi_behavior, agreement_behavior, factual_recall_behavior, antonym_behavior]
+_CATEGORIES = [
+    ("robin", "bird", "fish"),
+    ("salmon", "fish", "bird"),
+    ("oak", "tree", "animal"),
+    ("rose", "flower", "tree"),
+]
+
+
+def category_membership_behavior(handle: adapter.ModelHandle, seed: int = 0) -> dict:
+    def gen(rng):
+        item, cat, wrong = rng.choice(_CATEGORIES)
+        clean = f"A {item} is a type of"
+        other_item, other_cat, _ = rng.choice([c for c in _CATEGORIES if c[0] != item])
+        corrupted = f"A {other_item} is a type of"
+        return clean, corrupted, cat, wrong
+    return _make_task(handle, "Lexical Semantics: category membership", "Angle 6: Lexical Semantics", gen, seed=seed)
+
+
+ANGLE_3_BEHAVIORS = [arithmetic_addition_behavior, magnitude_comparison_behavior]
+ANGLE_4_BEHAVIORS = [induction_copying_behavior]
+ANGLE_5_BEHAVIORS = [gender_bias_behavior]
+ANGLE_6_BEHAVIORS = [antonym_behavior, category_membership_behavior]
+
+ALL_BEHAVIORS = [
+    ioi_behavior,
+    agreement_behavior,
+    factual_recall_behavior,
+    arithmetic_addition_behavior,
+    magnitude_comparison_behavior,
+    induction_copying_behavior,
+    gender_bias_behavior,
+    antonym_behavior,
+    category_membership_behavior,
+]

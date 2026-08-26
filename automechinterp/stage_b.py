@@ -38,15 +38,16 @@ def _role_hypothesis(layer_idx: int, flagged_by: list[str], circuits: dict[str, 
     return f"shared circuit layer -- found for {n_with_circuit}/{n_total} behaviors: {behaviors_with_circuit}"
 
 
-def run_stage_b(backend_kind: str = "heuristic") -> dict:
+def run_stage_b(backend_kind: str = "heuristic", target_model_id: str | None = None) -> dict:
     backend_kind = backend_kind or config.LLM_BACKEND
+    target_model_id = target_model_id or config.TARGET_MODEL_ID
     print("=" * 78)
-    print(f"STAGE B -- Autonomous Layer Atlas ({config.TARGET_MODEL_ID}, "
+    print(f"STAGE B -- Autonomous Layer Atlas ({target_model_id}, "
           f"{len(ALL_BEHAVIORS)} behaviors)")
     print("=" * 78)
 
-    handle = adapter.register_model(config.TARGET_MODEL_ID, device=config.DEVICE)
-    LOG.emit("System", f"registered {config.TARGET_MODEL_ID}: {handle.n_layers} layers")
+    handle = adapter.register_model(target_model_id, device=config.DEVICE)
+    LOG.emit("System", f"registered {target_model_id}: {handle.n_layers} layers (device={config.DEVICE})")
 
     per_behavior_results = []
     layer_flagged_by: dict[int, list[str]] = {l: [] for l in range(handle.n_layers)}

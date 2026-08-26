@@ -102,14 +102,15 @@ def profile_network(handle: ModelHandle) -> dict:
         cls = type(m).__name__
         taxonomy[cls] = taxonomy.get(cls, 0) + 1
     cfg = getattr(handle.model, "config", None)
+    hidden_size = getattr(cfg, "hidden_size", None) or getattr(cfg, "n_embd", None)
+    n_heads = getattr(cfg, "num_attention_heads", None) or getattr(cfg, "n_head", None)
     return {
         "model_id": handle.model_id,
         "n_layers": handle.n_layers,
+        "hidden_size": hidden_size,
+        "n_heads": n_heads,
+        "n_params": sum(p.numel() for p in handle.model.parameters()),
         "layer_stack_path": handle.layer_stack_path,
-        "n_params": n_params,
-        "hidden_size": getattr(cfg, "hidden_size", getattr(cfg, "n_embd", None)),
-        "n_heads": getattr(cfg, "num_attention_heads", getattr(cfg, "n_head", None)),
-        "module_taxonomy_top10": sorted(taxonomy.items(), key=lambda kv: -kv[1])[:10],
     }
 
 
@@ -148,7 +149,7 @@ def capture_activations(handle: ModelHandle, layer_indices: list[int], texts: li
     for idx in layer_indices:
         hs = captured[idx]  # [batch, seq, d_model]
         rows = hs[torch.arange(hs.shape[0]), last_idx]  # [batch, d_model] pooled at last real token
-        out[idx] = rows.cpu().numpy()
+        out[idx] = rows.float().cpu().numpy()
     return out
 
 
@@ -383,8 +384,8 @@ def _find_attn_out_proj(layer: nn.Module) -> nn.Module:
 
 def get_head_dim(handle: ModelHandle) -> int:
     cfg = handle.model.config
-    hidden = getattr(cfg, "hidden_size", getattr(cfg, "n_embd"))
-    n_head = getattr(cfg, "num_attention_heads", getattr(cfg, "n_head"))
+    hidden = getattr(cfg, "hidden_size", None) or getattr(cfg, "n_embd", None)
+    n_head = getattr(cfg, "num_attention_heads", None) or getattr(cfg, "n_head", None)
     return hidden // n_head
 
 
