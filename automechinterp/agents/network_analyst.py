@@ -34,35 +34,23 @@ def build_network_analyst(handle: adapter.ModelHandle, probe_texts: list[str],
         drops = state.get("cka_drops", [])
         cka_flagged = [b for b, d in zip(boundaries, drops) if d >= 0.15]
 
-        # Sec. 4.7 "Network Analyst ablation" trade-off, decided at run time:
-        # small/cheap models get an exhaustive redundancy scan (CKA is only a
-        # coarse, task-agnostic signal -- Sec. 5.2 risk); on deeper models,
-        # scope to the CKA-flagged boundaries to keep the tool-call budget sane.
-        if handle.n_layers <= 16:
-            candidates = list(range(handle.n_layers))
-            LOG.emit("NetworkAnalyst", f"{handle.n_layers} layers is cheap enough to redundancy-scan "
-                                         "exhaustively rather than trust the task-agnostic CKA signal alone")
-        else:
-            candidates = cka_flagged or list(range(min(4, handle.n_layers)))
-            LOG.emit("NetworkAnalyst", f"adaptively scoping redundancy_scan to CKA-flagged layers "
-                                         f"{candidates} (not all {handle.n_layers} layers)",
-                     gap_id="dalvi-fixed-pipeline")
-
-        digest, xs, ys = tier_n.redundancy_scan(handle, candidates, lambda: task_metric_fn)
-        state["redundancy_digest"] = digest
-        state["flagged_layers"] = [x for x, y in zip(xs, ys) if y >= 0.05] or cka_flagged or candidates[:2]
-        return digest
-
-    tools = {
-        "profile_network": do_profile,
-        "layerwise_cka_scan": do_cka_scan,
-        "redundancy_scan_flagged": do_redundancy_flagged,
+        # Adaptive layer selection: On GPU or up to 36 layers, an exhaustive
+        # scan is fast (sub-second) and ensures no deep circuits are missed.
+        # For even larger models (>36 layers), pick the top relative CKA drops
+        # plus representative strided checkpoints across early/mid/late depth.
+        if handle.n_layers <= 36:
+            elif drops:
+                top_cka = sorted(range(len(drops)), key=lambda i: drops[i], reverse=True)[:8]
+                strided = list(range(0, handle.n_layers, max(1, handle.n_layers // 6)))
+            else:
+                candidates = list(range(handle.n_layers))
+            LOG.emit("NetworkAnalyst", f"adaptively scoping redundancy_scan to flagged depth loci "
+                                         f"{candidates} (out of {handle.n_layers} layers)",
     }
 
     def policy_fn(evidence_text: str, tool_menu: list[str]) -> dict:
         if "profile" not in state:
             return {"action": "profile_network", "args": {}, "reasoning": "heuristic Network Analyst step 1/3"}
-        if "cka_digest" not in state:
             return {"action": "layerwise_cka_scan", "args": {}, "reasoning": "heuristic Network Analyst step 2/3"}
         if "redundancy_digest" not in state:
             return {"action": "redundancy_scan_flagged", "args": {}, "reasoning": "heuristic Network Analyst step 3/3"}

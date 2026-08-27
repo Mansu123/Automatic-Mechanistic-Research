@@ -16,6 +16,7 @@ runs on a laptop (heuristic backend, GPT-2 target) or on a workstation/Colab
 A100 (Qwen2.5-7B-Instruct backend, Gemma/Mistral target) without edits.
 """
 import os
+import torch
 
 TARGET_MODEL_ID = os.environ.get("AMI_TARGET_MODEL", "gpt2")
 HEAVY_MODEL_ID = os.environ.get("AMI_HEAVY_MODEL", "Qwen/Qwen2.5-7B-Instruct")
@@ -26,7 +27,7 @@ SMOKETEST_MODEL_ID = os.environ.get("AMI_SMOKETEST_MODEL", "Qwen/Qwen2.5-0.5B-In
 #              "openai" / "anthropic" (optional API backends, see llm_backends.py)
 LLM_BACKEND = os.environ.get("AMI_LLM_BACKEND", "heuristic")
 
-DEVICE = os.environ.get("AMI_DEVICE", "cpu")
+DEVICE = os.environ.get("AMI_DEVICE", "cuda" if torch.cuda.is_available() else "cpu")
 
 # Section 3.6: budget-aware termination
 GLOBAL_TOOL_CALL_BUDGET = int(os.environ.get("AMI_TOOL_BUDGET", "120"))

@@ -119,13 +119,14 @@ def run_eap(handle: adapter.ModelHandle, clean_prompt: str, corrupted_prompt: st
             grad = grad.detach()
             h.remove()
 
-        seq_len = grad.shape[1]
-        clean_slice = captured["clean"][:, -seq_len:, :]
-        corr_slice = grads["x"].detach()
+        min_len = min(grad.shape[1], captured["clean"].shape[1], grads["x"].shape[1])
+        clean_slice = captured["clean"][:, -min_len:, :]
+        corr_slice = grads["x"].detach()[:, -min_len:, :]
+        g_slice = grad[:, -min_len:, :]
         diff = clean_slice - corr_slice
         for head_idx in range(n_heads):
             lo, hi = head_idx * head_dim, (head_idx + 1) * head_dim
-            score = (grad[:, :, lo:hi] * diff[:, :, lo:hi]).sum().item()
+            score = (g_slice[:, :, lo:hi] * diff[:, :, lo:hi]).sum().item()
             names.append(f"L{layer_idx}H{head_idx}")
             scores.append(score)
 
