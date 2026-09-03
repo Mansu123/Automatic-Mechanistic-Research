@@ -43,6 +43,12 @@ class ModelHandle:
     device: str
     layer_stack_path: str
     layers: list[nn.Module] = field(repr=False)
+    # "eager" gives per-head attention weights (output_attentions=True) but some
+    # architectures (GPT-NeoX / Pythia on transformers >= 5.x) go numerically
+    # unstable in the eager attention path and return NaN logits. register_model
+    # detects that and falls back; anything below "eager" means Tier C's
+    # get_attention_pattern is unavailable for this model (see that function).
+    attn_impl: str = "eager"
 
     @property
     def n_layers(self) -> int:
@@ -70,6 +76,20 @@ def _discover_layers(model: nn.Module) -> tuple[str, list[nn.Module]]:
                       f"Tried: {_LAYER_STACK_PATHS}")
 
 
+def _logits_are_finite(model: nn.Module, tok, device: str) -> bool:
+    """One tiny forward pass -- catches architectures whose eager attention
+    path is numerically broken on the installed transformers (GPT-NeoX /
+    Pythia return all-NaN logits from a mid-stack layer)."""
+    try:
+        batch = tok(["The quick brown fox jumps over the lazy dog."],
+                    return_tensors="pt").to(device)
+        with torch.no_grad():
+            logits = model(**batch).logits
+        return bool(torch.isfinite(logits).all())
+    except Exception:
+        return False
+
+
 def register_model(model_id: str, device: str = "cpu", torch_dtype=None) -> ModelHandle:
     """Tool: register_model(). Introspects the module graph and returns a
     structural map the Network Analyst reasons over (Tier N)."""
@@ -78,19 +98,46 @@ def register_model(model_id: str, device: str = "cpu", torch_dtype=None) -> Mode
     tok = AutoTokenizer.from_pretrained(model_id)
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
-    # "eager" attention is required for output_attentions=True (Tier C's
-    # get_attention_pattern) to actually return per-head attention weights;
-    # SDPA/flash backends skip materializing them.
-    kwargs = {"attn_implementation": "eager"}
-    if torch_dtype is not None:
-        kwargs["torch_dtype"] = torch_dtype
-    model = AutoModelForCausalLM.from_pretrained(model_id, **kwargs)
-    model.to(device)
-    model.eval()
+
+    def _load(attn_impl: str | None):
+        kwargs = {} if attn_impl is None else {"attn_implementation": attn_impl}
+        if torch_dtype is not None:
+            kwargs["torch_dtype"] = torch_dtype
+        m = AutoModelForCausalLM.from_pretrained(model_id, **kwargs)
+        m.to(device)
+        m.eval()
+        return m
+
+    # "eager" is required for output_attentions=True (Tier C's
+    # get_attention_pattern) to return per-head weights -- SDPA/flash skip
+    # materializing them. But if eager is numerically broken for this
+    # architecture (NaN logits), a model that runs is worth more than one
+    # attention tool: fall back, and let get_attention_pattern report itself
+    # unavailable.
+    model = _load("eager")
+    attn_impl = "eager"
+    if not _logits_are_finite(model, tok, device):
+        del model
+        for fallback in ("sdpa", None):
+            try:
+                cand = _load(fallback)
+            except (ValueError, ImportError):
+                continue
+            if _logits_are_finite(cand, tok, device):
+                model, attn_impl = cand, (fallback or "default")
+                print(f"[adapter] {model_id}: eager attention gives non-finite logits on this "
+                      f"transformers build -- using {attn_impl!r} instead (get_attention_pattern "
+                      f"will be unavailable for this model)")
+                break
+            del cand
+        else:
+            print(f"[adapter] WARNING: {model_id} produced non-finite logits with every "
+                  f"attention backend tried; proceeding with eager anyway")
+            model = _load("eager")
 
     path, layers = _discover_layers(model)
     return ModelHandle(model=model, tokenizer=tok, model_id=model_id, device=device,
-                        layer_stack_path=path, layers=layers)
+                        layer_stack_path=path, layers=layers, attn_impl=attn_impl)
 
 
 def profile_network(handle: ModelHandle) -> dict:
@@ -463,3 +510,42 @@ def ablate_head(handle: ModelHandle, layer_idx: int, head_idx: int,
             return metric_fn(logits)
         finally:
             h.remove()
+
+
+def ablate_head_set(handle: ModelHandle, heads: list[tuple[int, int]],
+                     input_ids: torch.Tensor, attention_mask: torch.Tensor,
+                     metric_fn: Callable[[torch.Tensor], float], mode: str = "mean") -> float:
+    """`ablate_head` generalized to a SET of (layer, head) pairs ablated in a
+    single forward pass -- the coalition-value primitive m(S) that S-EAP's
+    exact second-order ground truth needs (Syn(i,j) = m({i,j}) - m({i}) -
+    m({j}) + m({})). One pre-hook per distinct layer."""
+    head_dim = get_head_dim(handle)
+    by_layer: dict[int, list[int]] = {}
+    for (l, hd) in heads:
+        by_layer.setdefault(l, []).append(hd)
+
+    def make_hook(layer_heads: list[int]):
+        def pre_hook(module, args, kwargs):
+            x = (args[0] if args else kwargs["input"]).clone()
+            for hd in layer_heads:
+                lo, hi = hd * head_dim, (hd + 1) * head_dim
+                if mode == "zero":
+                    x[:, :, lo:hi] = 0.0
+                else:
+                    x[:, :, lo:hi] = x[:, :, lo:hi].mean(dim=(0, 1), keepdim=True)
+            if args:
+                return (x,) + args[1:], kwargs
+            kwargs["input"] = x
+            return args, kwargs
+        return pre_hook
+
+    with MODEL_LOCK:
+        handles = [_find_attn_out_proj(handle.layers[l]).register_forward_pre_hook(
+                       make_hook(hds), with_kwargs=True) for l, hds in by_layer.items()]
+        try:
+            with torch.no_grad():
+                logits = handle.model(input_ids=input_ids, attention_mask=attention_mask).logits
+            return metric_fn(logits)
+        finally:
+            for h in handles:
+                h.remove()

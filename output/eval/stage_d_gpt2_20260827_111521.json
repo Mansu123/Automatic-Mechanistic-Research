@@ -1,0 +1,178 @@
+{
+  "target_model_id": "gpt2",
+  "reports_dir": "/Users/mansuba/Desktop/MI MAIN RESEARCH/  2 Automatic-Mechanistic-Research-main/human_review/reports",
+  "reports": [
+    {
+      "report_id": "gpt2__indirect_object_identification_coreference",
+      "behavior": "Indirect Object Identification (coreference)",
+      "category": "Angle 1: Linguistic",
+      "model": "gpt2",
+      "report_path": "/Users/mansuba/Desktop/MI MAIN RESEARCH/  2 Automatic-Mechanistic-Research-main/human_review/reports/gpt2__indirect_object_identification_coreference.md",
+      "applicable_rubrics": [
+        "localization_accuracy",
+        "circuit_precision_recall",
+        "verification_rigor",
+        "explanatory_depth",
+        "faithfulness",
+        "clarity_structure",
+        "calibration"
+      ],
+      "verdict": "Refuted",
+      "ai_scores": null
+    },
+    {
+      "report_id": "gpt2__subject_verb_number_agreement_syntax",
+      "behavior": "Subject-verb number agreement (syntax)",
+      "category": "Angle 1: Linguistic",
+      "model": "gpt2",
+      "report_path": "/Users/mansuba/Desktop/MI MAIN RESEARCH/  2 Automatic-Mechanistic-Research-main/human_review/reports/gpt2__subject_verb_number_agreement_syntax.md",
+      "applicable_rubrics": [
+        "localization_accuracy",
+        "circuit_precision_recall",
+        "verification_rigor",
+        "explanatory_depth",
+        "faithfulness",
+        "clarity_structure",
+        "calibration"
+      ],
+      "verdict": "Refuted",
+      "ai_scores": null
+    },
+    {
+      "report_id": "gpt2__factual_recall_country_capitals",
+      "behavior": "Factual recall: country capitals",
+      "category": "Angle 2: Factual",
+      "model": "gpt2",
+      "report_path": "/Users/mansuba/Desktop/MI MAIN RESEARCH/  2 Automatic-Mechanistic-Research-main/human_review/reports/gpt2__factual_recall_country_capitals.md",
+      "applicable_rubrics": [
+        "localization_accuracy",
+        "circuit_precision_recall",
+        "verification_rigor",
+        "explanatory_depth",
+        "faithfulness",
+        "clarity_structure",
+        "calibration",
+        "multi_hop_robustness"
+      ],
+      "verdict": "Probable",
+      "ai_scores": null
+    },
+    {
+      "report_id": "gpt2__arithmetic_single_digit_addition",
+      "behavior": "Arithmetic: single-digit addition",
+      "category": "Angle 3: Arithmetic",
+      "model": "gpt2",
+      "report_path": "/Users/mansuba/Desktop/MI MAIN RESEARCH/  2 Automatic-Mechanistic-Research-main/human_review/reports/gpt2__arithmetic_single_digit_addition.md",
+      "applicable_rubrics": [
+        "localization_accuracy",
+        "circuit_precision_recall",
+        "verification_rigor",
+        "explanatory_depth",
+        "faithfulness",
+        "clarity_structure",
+        "calibration",
+        "cross_instance_generalization",
+        "null_result_quality"
+      ],
+      "verdict": "Refuted",
+      "ai_scores": null
+    },
+    {
+      "report_id": "gpt2__reasoning_magnitude_comparison",
+      "behavior": "Reasoning: magnitude comparison",
+      "category": "Angle 3: Arithmetic",
+      "model": "gpt2",
+      "report_path": "/Users/mansuba/Desktop/MI MAIN RESEARCH/  2 Automatic-Mechanistic-Research-main/human_review/reports/gpt2__reasoning_magnitude_comparison.md",
+      "applicable_rubrics": [
+        "localization_accuracy",
+        "circuit_precision_recall",
+        "verification_rigor",
+        "explanatory_depth",
+        "faithfulness",
+        "clarity_structure",
+        "calibration",
+        "cross_instance_generalization",
+        "null_result_quality"
+      ],
+      "verdict": "Refuted",
+      "ai_scores": null
+    },
+    {
+      "report_id": "gpt2__induction_repeated_token_copying",
+      "behavior": "Induction: repeated token copying",
+      "category": "Angle 4: Induction",
+      "model": "gpt2",
+      "report_path": "/Users/mansuba/Desktop/MI MAIN RESEARCH/  2 Automatic-Mechanistic-Research-main/human_review/reports/gpt2__induction_repeated_token_copying.md",
+      "applicable_rubrics": [
+        "localization_accuracy",
+        "circuit_precision_recall",
+        "verification_rigor",
+        "explanatory_depth",
+        "faithfulness",
+        "clarity_structure",
+        "calibration",
+        "induction_consistency"
+      ],
+      "verdict": "Refuted",
+      "ai_scores": null
+    },
+    {
+      "report_id": "gpt2__social_bias_gender_occupation_stereotype",
+      "behavior": "Social Bias: gender-occupation stereotype",
+      "category": "Angle 5: Social Bias",
+      "model": "gpt2",
+      "report_path": "/Users/mansuba/Desktop/MI MAIN RESEARCH/  2 Automatic-Mechanistic-Research-main/human_review/reports/gpt2__social_bias_gender_occupation_stereotype.md",
+      "applicable_rubrics": [
+        "localization_accuracy",
+        "circuit_precision_recall",
+        "verification_rigor",
+        "explanatory_depth",
+        "faithfulness",
+        "clarity_structure",
+        "calibration",
+        "harm_awareness",
+        "overclaim_guard"
+      ],
+      "verdict": "Refuted",
+      "ai_scores": null
+    },
+    {
+      "report_id": "gpt2__lexical_semantics_antonym_prediction",
+      "behavior": "Lexical Semantics: antonym prediction",
+      "category": "Angle 6: Lexical Semantics",
+      "model": "gpt2",
+      "report_path": "/Users/mansuba/Desktop/MI MAIN RESEARCH/  2 Automatic-Mechanistic-Research-main/human_review/reports/gpt2__lexical_semantics_antonym_prediction.md",
+      "applicable_rubrics": [
+        "localization_accuracy",
+        "circuit_precision_recall",
+        "verification_rigor",
+        "explanatory_depth",
+        "faithfulness",
+        "clarity_structure",
+        "calibration",
+        "sense_disambiguation_specificity"
+      ],
+      "verdict": "Refuted",
+      "ai_scores": null
+    },
+    {
+      "report_id": "gpt2__lexical_semantics_category_membership",
+      "behavior": "Lexical Semantics: category membership",
+      "category": "Angle 6: Lexical Semantics",
+      "model": "gpt2",
+      "report_path": "/Users/mansuba/Desktop/MI MAIN RESEARCH/  2 Automatic-Mechanistic-Research-main/human_review/reports/gpt2__lexical_semantics_category_membership.md",
+      "applicable_rubrics": [
+        "localization_accuracy",
+        "circuit_precision_recall",
+        "verification_rigor",
+        "explanatory_depth",
+        "faithfulness",
+        "clarity_structure",
+        "calibration",
+        "sense_disambiguation_specificity"
+      ],
+      "verdict": "Refuted",
+      "ai_scores": null
+    }
+  ]
+}

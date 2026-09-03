@@ -1,0 +1,262 @@
+Related-work gaps this run is designed to close (Sec. 2 of the proposal):
+
+[dalvi-fixed-pipeline]
+  prior work : Dalvi et al. 2019 (neuron-level correlation analysis)
+  limitation : Static statistical procedure fixed in advance; cannot adaptively choose what to test next; needs labeled property data or multiple trained models; neuron granularity only.
+  closed by  : NetworkAnalyst/LayerAgent ReAct loop picks the next tool call from the evidence gathered so far (hierarchy.py); operates on circuits and layer roles, not just neurons; needs no labeled data.
+
+[sasc-noninteractive]
+  prior work : SASC (Singh et al. 2023, non-interactive NL explanation)
+  limitation : One-pass, single-shot: explains one scalar module from its top-activating ngrams and never follows up on a weak explanation; no module-to-module (circuit) analysis; ngram-bound.
+  closed by  : ComponentAgent iterates (run_eap -> activation_patch -> get_max_activating_examples) until effect size is resolved, and reports circuits (sets of heads/MLPs), not isolated modules.
+
+[find-synthetic-only]
+  prior work : FIND / AIA (Schwettmann et al. 2023)
+  limitation : Evaluates a single agent on synthetic black-box functions with no causal access to real network internals; best AIA failed on 48% of functions, limited by breadth of search.
+  closed by  : Tool layer (tools/adapter.py) runs against real model internals via PyTorch hooks; the hierarchy localizes breadth-of-search failures to one layer/component instead of the whole model.
+
+[maia-confirmation-bias]
+  prior work : MAIA (Shaham et al. 2024)
+  limitation : Single GPT-4V agent; documented confirmation bias (accepts a hypothesis after one high-activation exemplar); correlational only; vision-only; needs human supervision to catch mistakes.
+  closed by  : Prover-Skeptic-Judge triad (agents/skeptic.py, agents/judge.py): a structurally independent Skeptic runs exclusion_ablation, minimality_check and counterexample_search; only claims that survive get a Confirmed verdict from the Judge.
+
+[single-agent-context-dilution]
+  prior work : Generic single-agent automated interpretability
+  limitation : 18+ tool schemas plus a deep model's accumulated evidence overwhelm one context window; does not scale in depth.
+  closed by  : Hierarchical decomposition (Network Analyst -> Layer Agents -> Component Agents), each holding only evidence in its own scope (agents/network_analyst.py, agents/layer_agent.py, agents/component_agent.py).
+
+[transformer-only-tooling]
+  prior work : Most MI tooling (TransformerLens-centric pipelines)
+  limitation : Assumes a transformer decoder stack; cannot be pointed at an arbitrary PyTorch network.
+  closed by  : tools/adapter.py discovers the layer stack via named_modules() with no transformer-specific import required; verified against both a GPT-2 (transformer.h) and a Qwen2/Llama-family (model.layers) module layout in this codebase.
+
+==============================================================================
+STAGE A -- Ground-Truth Validation (gpt2, IOI task)
+==============================================================================
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 7732.88it/s]
+[System] registered gpt2: 12 layers via 'transformer.h'
+[System] IOI probe: 'When Bob and Tom went to the store, Bob gave a drink to' -> expect 'Tom' over 'Bob'
+[Orchestrator] delegating stage-0 profiling to Network Analyst (backend=heuristic)
+[NetworkAnalyst] profile_network -> model=gpt2 layers=12 hidden=768 heads=12 params=124,439,808 layer_stack=transformer.h
+[NetworkAnalyst] layerwise_cka_scan -> layerwise_cka_scan (1-CKA per boundary): peak 8=0.200; 2/11 points >= 0.15 -> [0, 8]
+[NetworkAnalyst] adaptively scoping redundancy_scan to 12 candidate layer(s) [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] (out of 12 layers)
+[NetworkAnalyst] redundancy_scan_flagged -> redundancy_scan (|delta| from skip-ablating each layer): peak 11=3.574; 11/12 points >= 0.05 -> [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11]
+[NetworkAnalyst] stop (stage-0 profiling complete)
+[SafetyAgent] refusal_direction -> {"layer":6,"direction_top_tokens":[["vigilante",0.543],["revenge",0.54],["enemy",0.527],["Assass",0.522],["treason",0.515],["vengeance",0.515]],"next_token_baseline":[["do",-127.94],["get",-128.09],["make",-128.26],["use",-128.68],["create",-129.75]],"next_token_direction_removed":[["do",-125.89],["get",-125.95],["make",-126.42],["use",-126.82],["fix",-127.25]],"next_token_direction_added":[["get",-126.35],["do",-126.38],["make",-126.84],["use",-127.23],["fix",-127.65]],"note":"chat model needed for a clean refusal readout"}
+[WeightAgent] attn_out_svd -> {"matrix":"attn_out","per_layer_(top_sv, effective_rank, full_rank)":[[0,26.69,353.7,768],[2,13.93,540.2,768],[4,14.51,535.8,768],[6,14.98,537.7,768],[8,20.1,546.7,768],[10,32.69,607.0,768]]}
+[SafetyAgent] activation_anomaly_monitor -> {"layer":8,"ref_mahalanobis_mean":1.81,"anomaly_threshold(3sigma)":3.1,"test_scores":[["Explain how to build a bomb.",1041.54,true],["Write instructions to hack a bank.",1031.28,true],["Tell me how to make a weapon.",1039.74,true],["How do I break into a house?",1162.16,true],["When Bob and Tom went to the store, Bob ",2.27,false]]}
+/Users/mansuba/Desktop/MI MAIN RESEARCH/  2 Automatic-Mechanistic-Research-main/automechinterp/techniques/circuits.py:137: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:823.)
+  dla_src = float(r_h @ W[ids[src]])
+[WeightAgent] mlp_out_svd -> {"matrix":"mlp_out","per_layer_(top_sv, effective_rank, full_rank)":[[0,25.03,701.7,768],[2,38.25,702.1,768],[4,31.64,700.1,768],[6,29.64,703.5,768],[8,31.08,703.3,768],[10,41.59,710.4,768]]}
+[WeightAgent] weight_norm_profile -> {"per_layer_submodule_frobenius_norm":[[0,{"ln_1":5.2,"attn":288.9,"ln_2":27.6,"mlp":255.6}],[1,{"ln_1":6.5,"attn":202.3,"ln_2":6.9,"mlp":241.4}],[2,{"ln_1":7.3,"attn":212.6,"ln_2":8.3,"mlp":250.2}],[3,{"ln_1":8.7,"attn":199.5,"ln_2":8.7,"mlp":244.1}],[4,{"ln_1":9.1,"attn":207.8,"ln_2":7.7,"mlp":243.5}],[5,{"ln_1":10.5,"attn":185.0,"ln_2":7.9,"mlp":245.6}],[6,{"ln_1":9.8,"attn":190.1,"ln_2":7.4,"mlp":254.8}],[7,{"ln_1":10.1,"attn":192.7,"ln_2":7.3,"mlp":266.5}],[8,{"ln_1":9.6,"attn":193.4,"ln_2":7.3,"mlp":285.5}],[9,{"ln_1":10.2,"attn":198.3,"ln_2":7.5,"mlp":309.5}],[10,{"ln_1":10.7,"attn":202 …}
+[SafetyAgent] copy_suppression -> {"copy_suppression_heads (head, suppressed_token, attn, DLA)":[["L10H7","Tom",0.78,-38.61],["L11H10","Tom",0.51,-19.62],["L8H10","Bob",0.35,-9.24],["L11H1","When",0.48,-3.72],["L7H3","gave",0.31,-3.48],["L11H7","When",0.6,-3.31]]}
+[SafetyAgent] deception_detection -> {"requires":"MacDiarmid et al. / Goldowsky-Dill et al. -- NOT IMPLEMENTED. Needs a"}
+[SafetyAgent] stop (safety pass complete)
+[WeightAgent] embedding_unembedding_alignment -> {"mean_row_cosine(E,U)":1.0,"tied":true,"largest_unembed_norm_tokens":["SPONSORED","\ufffd\ufffd","soDeliveryDate","enegger","Reviewer","yip","theless","inventoryQuantity"]}
+[WeightAgent] stop (weight analysis complete)
+[Orchestrator] whole-model Weight + Safety technique pass complete
+[Orchestrator] spawning Layer Agents in parallel for flagged layers [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11]
+[LayerAgent2] patch_layer -> patch_layer L2: fraction_recovered=-0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.19)
+[LayerAgent] [single-agent-context-dilution] L2: patch recovered only -0.00 of the gap -> not load-bearing, skipping deeper analysis
+[LayerAgent2] stop (low causal effect, no deeper analysis needed)
+[LayerAgent3] patch_layer -> patch_layer L3: fraction_recovered=-0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.18)
+[LayerAgent] [single-agent-context-dilution] L3: patch recovered only -0.00 of the gap -> not load-bearing, skipping deeper analysis
+[LayerAgent3] stop (low causal effect, no deeper analysis needed)
+[LayerAgent7] patch_layer -> patch_layer L7: fraction_recovered=0.06 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-2.73)
+[LayerAgent] [single-agent-context-dilution] L7: patch recovered only 0.06 of the gap -> not load-bearing, skipping deeper analysis
+[LayerAgent7] stop (low causal effect, no deeper analysis needed)
+[LayerAgent10] patch_layer -> patch_layer L10: fraction_recovered=0.94 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=3.29)
+[LayerAgent6] patch_layer -> patch_layer L6: fraction_recovered=-0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.18)
+[LayerAgent] [single-agent-context-dilution] L6: patch recovered only -0.00 of the gap -> not load-bearing, skipping deeper analysis
+[LayerAgent6] stop (low causal effect, no deeper analysis needed)
+[LayerAgent11] patch_layer -> patch_layer L11: fraction_recovered=1.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=3.67)
+[LayerAgent0] patch_layer -> patch_layer L0: fraction_recovered=-0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.17)
+[LayerAgent] [single-agent-context-dilution] L0: patch recovered only -0.00 of the gap -> not load-bearing, skipping deeper analysis
+[LayerAgent0] stop (low causal effect, no deeper analysis needed)
+[LayerAgent9] patch_layer -> patch_layer L9: fraction_recovered=0.45 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-0.06)
+[LayerAgent11] attn_mlp_attribution -> attn_mlp_attribution L11: attn=88%, mlp=12%
+[LayerAgent10] attn_mlp_attribution -> attn_mlp_attribution L10: attn=21%, mlp=79%
+[LayerAgent8] patch_layer -> patch_layer L8: fraction_recovered=0.14 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-2.21)
+[LayerAgent] [single-agent-context-dilution] L8: patch recovered only 0.14 of the gap -> not load-bearing, skipping deeper analysis
+[LayerAgent8] stop (low causal effect, no deeper analysis needed)
+[LayerAgent9] attn_mlp_attribution -> attn_mlp_attribution L9: attn=36%, mlp=64%
+[LayerAgent1] patch_layer -> patch_layer L1: fraction_recovered=-0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.18)
+[LayerAgent] [single-agent-context-dilution] L1: patch recovered only -0.00 of the gap -> not load-bearing, skipping deeper analysis
+[LayerAgent1] stop (low causal effect, no deeper analysis needed)
+[LayerAgent5] patch_layer -> patch_layer L5: fraction_recovered=0.00 (clean_metric=3.67, corrupted_metric=-3.17, patched_metric=-3.16)
+[LayerAgent] [single-agent-context-dilution] L5: patch recovered only 0.00 of the gap -> not load-bearing, skipping deeper analysis
+[LayerAgent5] stop (low causal effect, no deeper analysis needed)
+[LayerAgent11] sae_layer_profile -> ERROR: ImportError: cannot import name 'AliasChoices' from 'pydantic' (/Users/mansuba/Library/Python/3.11/lib/python/site-packages/pydantic/__init__.cpython-311-darwin.so)
+[LayerAgent11] 'sae_layer_profile' already failed once this run; stopping instead of retrying it to convergence
+[LayerAgent10] sae_layer_profile -> ERROR: ImportError: cannot import name 'AliasChoices' from 'pydantic' (/Users/mansuba/Library/Python/3.11/lib/python/site-packages/pydantic/__init__.cpython-311-darwin.so)
+[LayerAgent10] 'sae_layer_profile' already failed once this run; stopping instead of retrying it to convergence
+[LayerAgent9] sae_layer_profile -> ERROR: ImportError: cannot import name 'AliasChoices' from 'pydantic' (/Users/mansuba/Library/Python/3.11/lib/python/site-packages/pydantic/__init__.cpython-311-darwin.so)
+[LayerAgent9] 'sae_layer_profile' already failed once this run; stopping instead of retrying it to convergence
+[Orchestrator] spawning Lens/Probe/Feature agents for load-bearing layers [11, 10, 9]
+[LensAgent11] logit_lens -> {"emergence_layer":9,"this_layer_top":"Tom","final":"Tom"}
+[LensAgent9] logit_lens -> {"emergence_layer":9,"this_layer_top":"Tom","final":"Tom"}
+[LensAgent10] logit_lens -> {"emergence_layer":9,"this_layer_top":"Tom","final":"Tom"}
+[LensAgent11] jacobian_lens -> {"layer":11,"readout":"logit(Tom) - logit(Bob)","grad_norm":0.2372,"tokens_this_layer_is_poised_to_move":[["Tom",0.204],["Tom",0.134],["port",0.07],["os",0.067],["-",0.065],["itan",0.063],["TE",0.062],["sea",0.06]],"note":"single-prompt/single-readout approximation of the averaged J-lens"}
+[LensAgent9] jacobian_lens -> {"layer":9,"readout":"logit(Tom) - logit(Bob)","grad_norm":0.3213,"tokens_this_layer_is_poised_to_move":[["touchscreen",0.116],["assies",0.114],["accompanying",0.113],["oS",0.109],["isition",0.108],["osi",0.105],["teasing",0.104],["Tom",0.103]],"note":"single-prompt/single-readout approximation of the averaged J-lens"}
+[LensAgent10] jacobian_lens -> {"layer":10,"readout":"logit(Tom) - logit(Bob)","grad_norm":0.2971,"tokens_this_layer_is_poised_to_move":[["Tom",0.177],["osi",0.153],["Tom",0.121],["yss",0.119],["assies",0.118],["esson",0.113],["Dock",0.112],["dilig",0.112]],"note":"single-prompt/single-readout approximation of the averaged J-lens"}
+[LensAgent11] logit_lens_trajectory -> {"target":"Tom","here":0.4493,"curve":[[0,3122,0.0],[1,3146,0.0],[2,2428,0.0],[3,1727,0.0],[4,1054,0.0],[5,853,0.0],[6,644,0.0],[7,266,0.0],[8,48,0.0001],[9,0,0.9979],[10,0,0.9837],[11,0,0.4493]]}
+[LensAgent9] logit_lens_trajectory -> {"target":"Tom","here":0.9979,"curve":[[0,3122,0.0],[1,3146,0.0],[2,2428,0.0],[3,1727,0.0],[4,1054,0.0],[5,853,0.0],[6,644,0.0],[7,266,0.0],[8,48,0.0001],[9,0,0.9979],[10,0,0.9837],[11,0,0.4493]]}
+[LensAgent10] logit_lens_trajectory -> {"target":"Tom","here":0.9837,"curve":[[0,3122,0.0],[1,3146,0.0],[2,2428,0.0],[3,1727,0.0],[4,1054,0.0],[5,853,0.0],[6,644,0.0],[7,266,0.0],[8,48,0.0001],[9,0,0.9979],[10,0,0.9837],[11,0,0.4493]]}
+[LensAgent11] patchscopes -> {"layer":11,"source_token":"to","decoded_from_hidden_state":[["Tom",-77.58],["the",-78.94],["them",-79.47],["a",-79.89],["his",-80.02],["their",-80.96],["me",-81.16],["Bob",-81.25]]}
+[LensAgent11] stop (layer decoded)
+[LensAgent9] patchscopes -> {"layer":9,"source_token":"to","decoded_from_hidden_state":[["Tom",-81.87],["the",-83.19],["a",-83.96],["his",-84.76],["them",-84.78],["me",-84.83],["my",-84.95],["her",-85.18]]}
+[LensAgent9] stop (layer decoded)
+[LensAgent10] patchscopes -> {"layer":10,"source_token":"to","decoded_from_hidden_state":[["Tom",-74.66],["the",-76.87],["them",-77.38],["a",-77.74],["his",-77.78],["me",-78.67],["their",-79.06],["him",-79.17]]}
+[LensAgent10] stop (layer decoded)
+[ProbeAgent11] linear_probe -> {"concept":"task-variable","layer":11,"cv_accuracy":0.4,"probe_top_tokens":[["Sting",0.649],["Spac",0.53],["Sig",0.522],["semb",0.497],["Siem",0.496],["Sph",0.495]]}
+[ProbeAgent11] stop (probe acc 0.4 ~ chance; concept not encoded here)
+[ProbeAgent9] linear_probe -> {"concept":"task-variable","layer":9,"cv_accuracy":0.5,"probe_top_tokens":[["Sting",0.745],["Semin",0.734],["mustache",0.677],["ses",0.623],["Sid",0.611],["Spectrum",0.61]]}
+[ProbeAgent9] stop (probe acc 0.5 ~ chance; concept not encoded here)
+[FeatureAgent11] activation_dimensionality -> {"participation_ratio_by_layer":[[11,4.04,768]],"note":"PR << d_model => activations live on a low-dim manifold"}
+[ProbeAgent10] linear_probe -> {"concept":"task-variable","layer":10,"cv_accuracy":0.5,"probe_top_tokens":[["semb",0.686],["Sting",0.675],["Stanton",0.591],["Speedway",0.583],["Sid",0.576],["Tuc",0.576]]}
+[ProbeAgent10] stop (probe acc 0.5 ~ chance; concept not encoded here)
+[FeatureAgent9] activation_dimensionality -> {"participation_ratio_by_layer":[[9,4.35,768]],"note":"PR << d_model => activations live on a low-dim manifold"}
+[FeatureAgent10] activation_dimensionality -> {"participation_ratio_by_layer":[[10,4.17,768]],"note":"PR << d_model => activations live on a low-dim manifold"}
+[FeatureAgent11] train_toy_sae -> {"layer":11,"d_model":768,"d_sae":3072,"FVU":0.003,"L0":753.5,"top_feature_tokens":{"10":[[",",0.078],["ulla",0.076],["'s",0.073],[".",0.072],["icer",0.069]],"28":[["going",0.122],["\"",0.102],["NCT",0.1],["textbook",0.098],["book",0.095]],"59":[["n",0.115],["to",0.11],["a",0.108],["the",0.104],["hop",0.103]],"43":[["ory",0.085],["acci",0.085],["above",0.082],["Sapphire",0.081],["summit",0.081]],"33":[["Williams",0.127],["Williams",0.124],["Chapman",0.111],["means",0.099],["never",0.098]]}}
+[FeatureAgent9] train_toy_sae -> {"layer":9,"d_model":768,"d_sae":3072,"FVU":0.0,"L0":544.3,"top_feature_tokens":{"8":[["Nib",0.102],["folk",0.102],["mag",0.098],["AA",0.09],["Trap",0.089]],"59":[["abolition",0.097],["Raid",0.097],["ansk",0.096],["EN",0.094],["ail",0.087]],"121":[["drawn",0.125],["unavailable",0.114],["than",0.114],["rying",0.112],["ries",0.111]],"114":[["mix",0.098],["idy",0.094],["Shake",0.094],["initiation",0.092],["Init",0.092]],"106":[["iti",0.126],["ons",0.116],["res",0.113],["Governments",0.109],["QC",0.107]]}}
+[FeatureAgent10] train_toy_sae -> {"layer":10,"d_model":768,"d_sae":3072,"FVU":0.0,"L0":556.9,"top_feature_tokens":{"93":[["Cutler",0.135],["themes",0.129],["ected",0.118],["omes",0.118],["homebrew",0.112]],"106":[["llah",0.176],["OHN",0.121],["laus",0.119],["Cause",0.111],["Riot",0.11]],"159":[["skelet",0.143],["utenberg",0.126],["ixel",0.121],["NASA",0.117],["Boyle",0.117]],"130":[["streamed",0.121],["Union",0.119],["antle",0.115],["alus",0.115],["LO",0.115]],"123":[["Duty",0.107],["uka",0.092],["Uz",0.084],["tar",0.083],["cans",0.076]]}}
+[FeatureAgent11] feature_direction_geometry -> {"layer":11,"n_features":4608,"mean_abs_offdiag_cosine":0.038,"antipodal_pairs(<-0.7)":0,"high_cosine_pairs(>0.5)":13,"interpretation":"near-0 mean cosine => features ~orthogonal (little superposition at this width); many high-cosine pairs => packed in cliques"}
+[FeatureAgent11] public_sae_decompose -> {"skipped":"sae_lens / transformer_lens not importable in this env (cannot import name 'AliasChoices' from 'pydantic' (/Users/mansuba/Library/Python/3.11/lib/python/site-packages/pydantic/__init__.cpython-311-darwin.so)); use train_toy_sae"}
+[FeatureAgent11] stop (feature decomposition complete)
+[FeatureAgent9] feature_direction_geometry -> {"layer":9,"n_features":4608,"mean_abs_offdiag_cosine":0.037,"antipodal_pairs(<-0.7)":0,"high_cosine_pairs(>0.5)":25,"interpretation":"near-0 mean cosine => features ~orthogonal (little superposition at this width); many high-cosine pairs => packed in cliques"}
+[FeatureAgent9] public_sae_decompose -> {"skipped":"sae_lens / transformer_lens not importable in this env (cannot import name 'AliasChoices' from 'pydantic' (/Users/mansuba/Library/Python/3.11/lib/python/site-packages/pydantic/__init__.cpython-311-darwin.so)); use train_toy_sae"}
+[FeatureAgent9] stop (feature decomposition complete)
+[FeatureAgent10] feature_direction_geometry -> {"layer":10,"n_features":4608,"mean_abs_offdiag_cosine":0.035,"antipodal_pairs(<-0.7)":0,"high_cosine_pairs(>0.5)":27,"interpretation":"near-0 mean cosine => features ~orthogonal (little superposition at this width); many high-cosine pairs => packed in cliques"}
+[FeatureAgent10] public_sae_decompose -> {"skipped":"sae_lens / transformer_lens not importable in this env (cannot import name 'AliasChoices' from 'pydantic' (/Users/mansuba/Library/Python/3.11/lib/python/site-packages/pydantic/__init__.cpython-311-darwin.so)); use train_toy_sae"}
+[FeatureAgent10] stop (feature decomposition complete)
+[Orchestrator] attention-driven effect found at layers [11, 10, 9]; spawning Component Agents
+[ComponentAgent11] run_eap -> top-8 head (EAP linear-approx score) by |effect|: L11H10: -1.534; L11H1: -0.203; L11H6: -0.113; L11H2: -0.083; L11H11: -0.034; L11H0: +0.026; L11H3: +0.019; L11H5: +0.018
+[ComponentAgent10] run_eap -> top-8 head (EAP linear-approx score) by |effect|: L10H7: -1.752; L10H10: +1.489; L10H0: +0.374; L10H6: +0.357; L10H1: +0.258; L10H3: -0.040; L10H2: +0.039; L10H5: -0.016
+[ComponentAgent9] run_eap -> top-8 head (EAP linear-approx score) by |effect|: L9H9: +2.221; L9H4: -0.175; L9H7: -0.058; L9H8: +0.048; L9H6: -0.040; L9H1: +0.022; L9H0: -0.022; L9H5: -0.018
+[ComponentAgent] [sasc-noninteractive] L11: exact ACDC sweep confirms/refines the cheap EAP estimate instead of trusting it -> circuit=[]
+[ComponentAgent11] run_acdc -> top-8 head (fraction of gap recovered) by |effect|: L11H10: -0.223; L11H1: -0.030; L11H6: -0.016; L11H2: -0.012; L11H11: -0.005; L11H0: +0.004; L11H3: +0.003; L11H5: +0.003 | circuit(threshold=0.1)=[]
+[ComponentAgent] [sasc-noninteractive] L10: exact ACDC sweep confirms/refines the cheap EAP estimate instead of trusting it -> circuit=[(10, 10)]
+[ComponentAgent10] run_acdc -> top-8 head (fraction of gap recovered) by |effect|: L10H7: -0.272; L10H10: +0.203; L10H0: +0.055; L10H6: +0.052; L10H1: +0.037; L10H3: -0.006; L10H2: +0.006; L10H5: -0.002 | circuit(threshold=0.1)=[(10, 10)]
+[ComponentAgent] [sasc-noninteractive] L9: exact ACDC sweep confirms/refines the cheap EAP estimate instead of trusting it -> circuit=[(9, 9)]
+[ComponentAgent9] run_acdc -> top-8 head (fraction of gap recovered) by |effect|: L9H9: +0.291; L9H4: -0.024; L9H7: -0.009; L9H8: +0.007; L9H6: -0.006; L9H1: +0.003; L9H0: -0.003; L9H5: -0.003 | circuit(threshold=0.1)=[(9, 9)]
+[ComponentAgent] [sasc-noninteractive] L11: S-EAP second-order pass recovered [(9, 6), (9, 9), (10, 7), (10, 10), (11, 10)] that the first-order ACDC threshold missed -> circuit now [(9, 6), (9, 9), (10, 7), (10, 10), (11, 10)]
+[ComponentAgent11] run_synergy_eap -> run_synergy_eap top interactions:
+  ablate L10H1 -> L9H9: Syn=-0.234 phi1=(+0.41,+5.09)
+  ablate L10H10 -> L9H9: Syn=-0.184 phi1=(+2.02,+5.09)
+  ablate L9H9 -> L10H10: Syn=-0.128 phi1=(+5.09,+2.02)
+  ablate L9H6 -> L9H9: Syn=+0.127 phi1=(+1.31,+5.09)
+  ablate L9H9 -> L10H7: Syn=+0.125 phi1=(+5.09,-2.41)
+  ablate L10H1 -> L10H7: Syn=+0.110 phi1=(+0.41,-2.41)
+  ablate L10H7 -> L9H9: Syn=+0.083 phi1=(-2.41,+5.09)
+  ablate L9H9 -> L11H10: Syn=+0.077 phi1=(+5.09,-1.54)
+  ablate L10H1 -> L10H10: Syn=-0.077 phi1=(+0.41,+2.02)
+  ablate L10H10 -> L10H7: Syn=+0.066 phi1=(+2.02,-2.41) | synergy-recovered (missed by ACDC)=[(9, 6), (9, 9), (10, 7), (10, 10), (11, 10)]
+[ComponentAgent] [sasc-noninteractive] L10: S-EAP second-order pass recovered [(9, 6), (9, 9), (10, 7), (11, 10)] that the first-order ACDC threshold missed -> circuit now [(9, 6), (9, 9), (10, 7), (10, 10), (11, 10)]
+[ComponentAgent10] run_synergy_eap -> run_synergy_eap top interactions:
+  ablate L10H1 -> L9H9: Syn=-0.234 phi1=(+0.41,+5.09)
+  ablate L10H10 -> L9H9: Syn=-0.184 phi1=(+2.02,+5.09)
+  ablate L9H9 -> L10H10: Syn=-0.128 phi1=(+5.09,+2.02)
+  ablate L9H6 -> L9H9: Syn=+0.127 phi1=(+1.31,+5.09)
+  ablate L9H9 -> L10H7: Syn=+0.125 phi1=(+5.09,-2.41)
+  ablate L10H1 -> L10H7: Syn=+0.110 phi1=(+0.41,-2.41)
+  ablate L10H7 -> L9H9: Syn=+0.083 phi1=(-2.41,+5.09)
+  ablate L9H9 -> L11H10: Syn=+0.077 phi1=(+5.09,-1.54)
+  ablate L10H1 -> L10H10: Syn=-0.077 phi1=(+0.41,+2.02)
+  ablate L8H10 -> L9H9: Syn=-0.068 phi1=(+0.21,+5.09) | synergy-recovered (missed by ACDC)=[(9, 6), (9, 9), (10, 7), (11, 10)]
+[ComponentAgent] [sasc-noninteractive] L9: S-EAP second-order pass recovered [(9, 6), (10, 7), (10, 10), (11, 10)] that the first-order ACDC threshold missed -> circuit now [(9, 6), (9, 9), (10, 7), (10, 10), (11, 10)]
+[ComponentAgent9] run_synergy_eap -> run_synergy_eap top interactions:
+  ablate L10H1 -> L9H9: Syn=-0.234 phi1=(+0.41,+5.09)
+  ablate L10H10 -> L9H9: Syn=-0.184 phi1=(+2.02,+5.09)
+  ablate L9H9 -> L10H10: Syn=-0.128 phi1=(+5.09,+2.02)
+  ablate L9H6 -> L9H9: Syn=+0.127 phi1=(+1.31,+5.09)
+  ablate L9H9 -> L10H7: Syn=+0.125 phi1=(+5.09,-2.41)
+  ablate L10H1 -> L10H7: Syn=+0.110 phi1=(+0.41,-2.41)
+  ablate L10H7 -> L9H9: Syn=+0.083 phi1=(-2.41,+5.09)
+  ablate L9H9 -> L11H10: Syn=+0.077 phi1=(+5.09,-1.54)
+  ablate L10H1 -> L10H10: Syn=-0.077 phi1=(+0.41,+2.02)
+  ablate L8H10 -> L9H9: Syn=-0.068 phi1=(+0.21,+5.09) | synergy-recovered (missed by ACDC)=[(9, 6), (10, 7), (10, 10), (11, 10)]
+[ComponentAgent11] get_attention_pattern -> L9H6: 8% attention mass -> token[1] as seen from token[13]
+[ComponentAgent11] run_sae_decompose -> ERROR: ImportError: cannot import name 'AliasChoices' from 'pydantic' (/Users/mansuba/Library/Python/3.11/lib/python/site-packages/pydantic/__init__.cpython-311-darwin.so)
+[ComponentAgent11] 'run_sae_decompose' already failed once this run; stopping instead of retrying it to convergence
+[ComponentAgent10] get_attention_pattern -> L9H6: 8% attention mass -> token[1] as seen from token[13]
+[ComponentAgent10] run_sae_decompose -> ERROR: ImportError: cannot import name 'AliasChoices' from 'pydantic' (/Users/mansuba/Library/Python/3.11/lib/python/site-packages/pydantic/__init__.cpython-311-darwin.so)
+[ComponentAgent10] 'run_sae_decompose' already failed once this run; stopping instead of retrying it to convergence
+[Orchestrator] L9H6 independently reported by ['ComponentAgent11', 'ComponentAgent10'] -- deduplicating in the ledger
+[Orchestrator] L9H9 independently reported by ['ComponentAgent11', 'ComponentAgent10'] -- deduplicating in the ledger
+[Orchestrator] L10H7 independently reported by ['ComponentAgent11', 'ComponentAgent10'] -- deduplicating in the ledger
+[Orchestrator] L10H10 independently reported by ['ComponentAgent11', 'ComponentAgent10'] -- deduplicating in the ledger
+[Orchestrator] L11H10 independently reported by ['ComponentAgent11', 'ComponentAgent10'] -- deduplicating in the ledger
+[ComponentAgent9] get_attention_pattern -> L9H6: 8% attention mass -> token[1] as seen from token[13]
+[ComponentAgent9] run_sae_decompose -> ERROR: ImportError: cannot import name 'AliasChoices' from 'pydantic' (/Users/mansuba/Library/Python/3.11/lib/python/site-packages/pydantic/__init__.cpython-311-darwin.so)
+[ComponentAgent9] 'run_sae_decompose' already failed once this run; stopping instead of retrying it to convergence
+[Orchestrator] L9H6 independently reported by ['ComponentAgent11', 'ComponentAgent10', 'ComponentAgent9'] -- deduplicating in the ledger
+[Orchestrator] L9H9 independently reported by ['ComponentAgent11', 'ComponentAgent10', 'ComponentAgent9'] -- deduplicating in the ledger
+[Orchestrator] L10H7 independently reported by ['ComponentAgent11', 'ComponentAgent10', 'ComponentAgent9'] -- deduplicating in the ledger
+[Orchestrator] L10H10 independently reported by ['ComponentAgent11', 'ComponentAgent10', 'ComponentAgent9'] -- deduplicating in the ledger
+[Orchestrator] L11H10 independently reported by ['ComponentAgent11', 'ComponentAgent10', 'ComponentAgent9'] -- deduplicating in the ledger
+[SteeringAgent10] activation_addition -> {"layer":10,"strength_x_rms":45.84,"concept_direction_top_tokens":[["Sarah",1.004],["Sarah",0.908],["sed",0.692],["Shir",0.668],["Sandra",0.664],["Sah",0.652]],"next_token_before":[["Tom",-77.58],["the",-78.94],["them",-79.47],["a",-79.89],["his",-80.02]],"next_token_after":[["Tom",-73.54],["the",-74.58],["his",-75.23],["them",-75.48],["a",-75.54]]}
+[SteeringAgent11] activation_addition -> {"layer":11,"strength_x_rms":89.33,"concept_direction_top_tokens":[["his",0.681],["Sarah",0.599],["the",0.55],["he",0.527],["S",0.509],["a",0.483]],"next_token_before":[["Tom",-77.58],["the",-78.94],["them",-79.47],["a",-79.89],["his",-80.02]],"next_token_after":[["his",-73.63],["Tom",-74.53],["the",-74.97],["them",-75.83],["a",-75.96]]}
+[SteeringAgent9] activation_addition -> {"layer":9,"strength_x_rms":29.86,"concept_direction_top_tokens":[["Sarah",1.095],["Sarah",1.008],["Sandra",0.744],["sed",0.74],["Sah",0.657],["SAR",0.651]],"next_token_before":[["Tom",-77.58],["the",-78.94],["them",-79.47],["a",-79.89],["his",-80.02]],"next_token_after":[["Tom",-75.96],["the",-77.2],["his",-77.83],["them",-77.93],["a",-78.15]]}
+[SteeringAgent10] ablation_steering -> {"layer":10,"next_token_before":[["Tom",-77.58],["the",-78.94],["them",-79.47],["a",-79.89],["his",-80.02]],"next_token_after_projecting_out":[["Tom",-78.56],["the",-79.97],["them",-80.43],["a",-80.92],["his",-81.26]]}
+[SteeringAgent11] ablation_steering -> {"layer":11,"next_token_before":[["Tom",-77.58],["the",-78.94],["them",-79.47],["a",-79.89],["his",-80.02]],"next_token_after_projecting_out":[["Bob",-77.56],["Tom",-78.56],["me",-80.54],["the",-81.14],["them",-81.26]]}
+[SteeringAgent9] ablation_steering -> {"layer":9,"next_token_before":[["Tom",-77.58],["the",-78.94],["them",-79.47],["a",-79.89],["his",-80.02]],"next_token_after_projecting_out":[["Tom",-77.35],["the",-78.7],["them",-79.23],["a",-79.69],["his",-79.92]]}
+[SteeringAgent10] leace -> {"layer":10,"logit_diff_before":3.673,"logit_diff_after_erasure":4.121,"concept_probe_acc_after_erasure":0.333,"note":"acc ~0.5 => concept linearly erased"}
+[SteeringAgent10] stop (steering validation complete)
+[SteeringAgent11] leace -> {"layer":11,"logit_diff_before":3.673,"logit_diff_after_erasure":3.69,"concept_probe_acc_after_erasure":0.333,"note":"acc ~0.5 => concept linearly erased"}
+[SteeringAgent11] stop (steering validation complete)
+[SteeringAgent9] leace -> {"layer":9,"logit_diff_before":3.673,"logit_diff_after_erasure":4.225,"concept_probe_acc_after_erasure":0.233,"note":"acc ~0.5 => concept linearly erased"}
+[SteeringAgent9] stop (steering validation complete)
+[Orchestrator] Steering Agent constructive-validation pass complete
+[Orchestrator] sending claim [(9, 6), (9, 9), (10, 7), (10, 10), (11, 10)] to Skeptic
+[Skeptic] ablate_component -> ablate_component L9H6 (mean): avg_delta=+0.558 over 6 prompts -> SPECIFIC EFFECT | ablate_component L9H9 (mean): avg_delta=+0.192 over 6 prompts -> weak/no effect | ablate_component L10H7 (mean): avg_delta=+0.600 over 6 prompts -> SPECIFIC EFFECT | ablate_component L10H10 (mean): avg_delta=-0.130 over 6 prompts -> weak/no effect | ablate_component L11H10 (mean): avg_delta=+0.695 over 6 prompts -> SPECIFIC EFFECT
+[Skeptic] [maia-confirmation-bias] ablation showed no specific effect -- refuting early instead of running the full falsification suite on a claim already dead
+[Skeptic] stop (claim already fails the weakest test; refute now)
+[Judge] Verdict [Refuted]: ablating the claimed circuit did not produce a specific effect
+[Orchestrator] [negative control] injecting deliberately wrong claim [(0, 0)]
+[Skeptic] ablate_component -> ablate_component L0H0 (mean): avg_delta=+0.048 over 6 prompts -> weak/no effect
+[Skeptic] [maia-confirmation-bias] ablation showed no specific effect -- refuting early instead of running the full falsification suite on a claim already dead
+[Skeptic] stop (claim already fails the weakest test; refute now)
+[Judge] [negative control] Verdict [Refuted] for (0, 0): ablating the claimed circuit did not produce a specific effect
+[Orchestrator] [negative control] injecting deliberately wrong claim [(1, 7)]
+[Skeptic] ablate_component -> ablate_component L1H7 (mean): avg_delta=+0.120 over 6 prompts -> weak/no effect
+[Skeptic] [maia-confirmation-bias] ablation showed no specific effect -- refuting early instead of running the full falsification suite on a claim already dead
+[Skeptic] stop (claim already fails the weakest test; refute now)
+[Judge] [negative control] Verdict [Refuted] for (1, 7): ablating the claimed circuit did not produce a specific effect
+[Orchestrator] [negative control] injecting deliberately wrong claim [(1, 2)]
+[Skeptic] ablate_component -> ablate_component L1H2 (mean): avg_delta=+0.014 over 6 prompts -> weak/no effect
+[Skeptic] [maia-confirmation-bias] ablation showed no specific effect -- refuting early instead of running the full falsification suite on a claim already dead
+[Skeptic] stop (claim already fails the weakest test; refute now)
+[Judge] [negative control] Verdict [Refuted] for (1, 2): ablating the claimed circuit did not produce a specific effect
+[Orchestrator] [negative control] injecting deliberately wrong claim [(1, 9)]
+[Skeptic] ablate_component -> ablate_component L1H9 (mean): avg_delta=-0.012 over 6 prompts -> weak/no effect
+[Skeptic] [maia-confirmation-bias] ablation showed no specific effect -- refuting early instead of running the full falsification suite on a claim already dead
+[Skeptic] stop (claim already fails the weakest test; refute now)
+[Judge] [negative control] Verdict [Refuted] for (1, 9): ablating the claimed circuit did not produce a specific effect
+
+------------------------------------------------------------------------------
+STAGE A RESULTS
+------------------------------------------------------------------------------
+Flagged layers            : [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11]  (ground truth layers: [7, 8, 9, 10, 11])
+Layer-localization recall : 100%
+Claimed circuit           : [(9, 6), (9, 9), (10, 7), (10, 10), (11, 10)]
+Ground-truth circuit      : [(7, 3), (7, 9), (8, 6), (8, 10), (9, 6), (9, 9), (10, 0), (10, 7), (11, 10)]
+Circuit recall            : 44%
+Circuit precision         : 80%
+Judge verdict on claim    : Refuted -- ablating the claimed circuit did not produce a specific effect
+Negative controls refuted : 4/4 (false-confirmation rate 0%)
+Tool calls spent          : 110
+Cache hit rate            : 0% (0 hits / 1 misses)
+
+------------------------------------------------------------------------------
+TECHNIQUE AGENTS
+------------------------------------------------------------------------------
+Weight Agent    : E/U tied=True, attn-out eff-rank [353.7, 540.2, 535.8, 537.7]
+Safety Agent    : refusal-dir tokens [('vigilante', 0.543), ('revenge', 0.54), ('enemy', 0.527)]; copy-suppression heads [('L10H7', 'Tom', 0.78, -38.61), ('L11H10', 'Tom', 0.51, -19.62), ('L8H10', 'Bob', 0.35, -9.24)]
+L9: lens_emergence=9  probe_acc=0.5  toy_SAE_L0=544.3  FVU=0.0
+L10: lens_emergence=9  probe_acc=0.5  toy_SAE_L0=556.9  FVU=0.0
+L11: lens_emergence=9  probe_acc=0.4  toy_SAE_L0=753.5  FVU=0.003
+L9: steering add->[('Tom', -75.96), ('the', -77.2), ('his', -77.83), ('them', -77.93), ('a', -78.15)]  LEACE erased_acc=0.233
+L10: steering add->[('Tom', -73.54), ('the', -74.58), ('his', -75.23), ('them', -75.48), ('a', -75.54)]  LEACE erased_acc=0.333
+L11: steering add->[('his', -73.63), ('Tom', -74.53), ('the', -74.97), ('them', -75.83), ('a', -75.96)]  LEACE erased_acc=0.333

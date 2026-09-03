@@ -1,0 +1,77 @@
+================================================================================
+MODEL: gpt2
+================================================================================
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 7913.07it/s]
+clean='When Bob and Tom went to the store, Bob gave a drink to'  corrupt='When Tom and Bob went to the store, Tom gave a drink to'  IO='Tom' S='Bob'
+12 layers x 12 heads
+clean logit-diff=3.673  corrupt logit-diff=-3.167
+
+[ACDC] top-8 head (fraction of gap recovered) by |effect|: L9H9: +0.291; L10H7: -0.272; L11H10: -0.223; L10H10: +0.203; L7H9: +0.068; L4H11: +0.065; L10H0: +0.055; L10H6: +0.052 | circuit(threshold=0.1)=[(9, 9), (10, 10)]
+ACDC recall vs GT_HEADS: 1/9  backup-mover recall: 1/8
+
+[EAP] top-8 head (EAP linear-approx score) by |effect|: L9H9: +2.221; L10H7: -1.752; L11H10: -1.534; L10H10: +1.489; L7H9: +0.437; L10H0: +0.374; L10H6: +0.357; L0H10: -0.309
+
+candidate heads (13): [(9, 0), (9, 6), (9, 7), (9, 9), (10, 0), (10, 1), (10, 2), (10, 6), (10, 7), (10, 10), (11, 2), (11, 9), (11, 10)]
+
+[S-EAP] run_synergy_eap top interactions:
+  ablate L10H1 -> L9H9: Syn=-0.234 phi1=(+0.41,+5.09)
+  ablate L10H10 -> L9H9: Syn=-0.184 phi1=(+2.02,+5.09)
+  ablate L9H9 -> L10H10: Syn=-0.128 phi1=(+5.09,+2.02)
+  ablate L9H6 -> L9H9: Syn=+0.127 phi1=(+1.31,+5.09)
+  ablate L9H9 -> L10H7: Syn=+0.125 phi1=(+5.09,-2.41)
+  ablate L10H1 -> L10H7: Syn=+0.110 phi1=(+0.41,-2.41)
+  ablate L10H7 -> L9H9: Syn=+0.083 phi1=(-2.41,+5.09)
+  ablate L9H9 -> L11H10: Syn=+0.077 phi1=(+5.09,-1.54)
+  ablate L10H1 -> L10H10: Syn=-0.077 phi1=(+0.41,+2.02)
+  ablate L10H10 -> L10H7: Syn=+0.066 phi1=(+2.02,-2.41)
+  ablate L9H9 -> L9H6: Syn=-0.064 phi1=(+5.09,+1.31)
+  ablate L9H6 -> L10H10: Syn=+0.056 phi1=(+1.31,+2.02)
+  ablate L10H1 -> L9H6: Syn=-0.045 phi1=(+0.41,+1.31)
+  ablate L10H10 -> L11H10: Syn=+0.044 phi1=(+2.02,-1.54)
+  ablate L10H0 -> L9H9: Syn=-0.040 phi1=(+0.61,+5.09)
+
+[VALIDATION] Spearman(S-EAP Syn, exact Syn) over 78 pairs: rho=-0.118 (p=3.0e-01) | on |Syn|: rho=+0.653 (p=8.9e-11)
+
+Top exact-synergy pairs:
+  (10, 7)+(11, 10): exact Syn=+0.623  phi1=(+0.96,+0.68)  [negNM+negNM]
+  (9, 9)+(10, 7): exact Syn=-0.622  phi1=(-0.52,+0.96)  [NM+negNM]
+  (10, 10)+(11, 10): exact Syn=-0.345  phi1=(-0.48,+0.68)  [BACKUP+negNM]
+  (9, 6)+(11, 10): exact Syn=+0.300  phi1=(+0.62,+0.68)  [NM+negNM]
+  (9, 6)+(9, 9): exact Syn=+0.287  phi1=(+0.62,-0.52)  [NM+NM]
+  (9, 6)+(10, 10): exact Syn=-0.265  phi1=(+0.62,-0.48)  [NM+BACKUP]
+  (9, 9)+(10, 0): exact Syn=-0.183  phi1=(-0.52,-0.16)  [NM+NM]
+  (9, 9)+(10, 10): exact Syn=-0.153  phi1=(-0.52,-0.48)  [NM+BACKUP]
+
+[FAITHFULNESS] (fraction of clean-corrupt logit-diff gap the circuit alone keeps)
+  ACDC circuit (2 heads):            +0.314
+  ACDC + top-4 synergy pairs (5 heads): +0.355
+  synergy heads added: [(9, 6), (9, 9), (10, 7), (10, 10), (11, 10)]
+================================================================================
+MODEL: Qwen/Qwen2.5-0.5B-Instruct
+================================================================================
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights: 100%|██████████| 290/290 [00:00<00:00, 6325.23it/s]
+clean='When Bob and Tom went to the store, Bob gave a drink to'  corrupt='When Tom and Bob went to the store, Tom gave a drink to'  IO='Tom' S='Bob'
+24 layers x 14 heads
+clean logit-diff=2.938  corrupt logit-diff=-1.188
+
+[ACDC] top-8 head (fraction of gap recovered) by |effect|: L20H9: +0.530; L22H6: -0.364; L22H0: +0.348; L23H0: -0.318; L21H0: +0.273; L16H10: -0.227; L19H6: -0.212; L8H7: -0.212 | circuit(threshold=0.1)=[(4, 12), (20, 9), (21, 0), (22, 0), (23, 2)]
+
+[EAP] top-8 head (EAP linear-approx score) by |effect|: L20H9: +2.172; L22H0: +1.586; L22H6: -1.453; L23H0: -1.312; L16H10: -1.109; L21H0: +1.094; L2H9: -0.918; L19H6: -0.773
+
+candidate heads (0): []
+
+[S-EAP] run_synergy_eap top interactions:
+
+
+[VALIDATION] Spearman(S-EAP Syn, exact Syn) over 0 pairs: rho=+nan (p=nan) | on |Syn|: rho=+nan (p=nan)
+
+Top exact-synergy pairs:
+
+[FAITHFULNESS] (fraction of clean-corrupt logit-diff gap the circuit alone keeps)
+  ACDC circuit (5 heads):            +0.530
+  ACDC + top-4 synergy pairs (5 heads): +0.530
+  synergy heads added: []
+
+
+wrote seap_benchmark_results.json

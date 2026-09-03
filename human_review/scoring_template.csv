@@ -1,0 +1,2 @@
+reviewer_name,report_id,localization_accuracy,circuit_precision_recall,verification_rigor,explanatory_depth,faithfulness,clarity_structure,calibration,multi_hop_robustness,cross_instance_generalization,null_result_quality,induction_consistency,harm_awareness,overclaim_guard,sense_disambiguation_specificity,scaling_coherence,notes
+,"<copy one row per report_id from reports/, fill in your name>",,,,,,,,,,,,,,,,

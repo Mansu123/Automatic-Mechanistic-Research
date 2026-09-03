@@ -33,6 +33,12 @@ DEVICE = os.environ.get("AMI_DEVICE", "cuda" if torch.cuda.is_available() else "
 GLOBAL_TOOL_CALL_BUDGET = int(os.environ.get("AMI_TOOL_BUDGET", "120"))
 PER_LAYER_AGENT_BUDGET = int(os.environ.get("AMI_LAYER_BUDGET", "10"))
 
+# Whether run_hierarchy also spawns the Lens / Probe / Feature / Steering /
+# Weight / Safety technique agents (automechinterp/techniques/*). On for a
+# single deep Stage-A run; Stage B/D override it to False (200 behaviors x the
+# full technique suite would be far too slow).
+DEEP_TECHNIQUES = os.environ.get("AMI_DEEP_TECHNIQUES", "1") not in ("0", "false", "False")
+
 # Section 4.6 thresholds used by the heuristic Network Analyst / Skeptic / Judge
 CKA_DROP_THRESHOLD = 0.15          # flags a layer boundary as "interesting"
 REDUNDANCY_DROP_THRESHOLD = 0.05   # dropping the layer must hurt the task metric

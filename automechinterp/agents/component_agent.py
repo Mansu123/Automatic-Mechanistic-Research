@@ -44,6 +44,46 @@ def build_component_agent(handle: adapter.ModelHandle, layer_idx: int,
                  gap_id="sasc-noninteractive")
         return digest
 
+    def do_synergy_eap():
+        """After the first-order ACDC sweep, catch heads it structurally
+        misses: a component whose marginal ablation effect is ~0 because a
+        'backup' compensates when it's removed (Wang et al.'s IOI backup
+        name-movers). Uses run_synergy_eap over the layer + its neighbours,
+        seeded with direct-logit-attribution heads (which see write-direction,
+        not ablation effect), and merges any head with significant synergy to
+        a circuit head into state['circuit']."""
+        lo = max(0, layer_idx - 2)
+        hi = min(handle.model.config.num_hidden_layers if hasattr(handle.model.config, "num_hidden_layers")
+                 else handle.n_layers, layer_idx + 3)
+        rng = range(lo, hi)
+        try:
+            dla_digest, dla_top = tier_c.direct_logit_attribution(
+                handle, clean_prompt, io_token, s_token, rng, n_heads, k=8)
+            state["dla_digest"] = dla_digest
+            circuit = list(state.get("circuit", []))
+            candidates = sorted(set(dla_top) | set(circuit))
+            if not candidates:
+                state["synergy_eap_digest"] = "no candidates for synergy pass"
+                return state["synergy_eap_digest"]
+            syn_digest, rows = tier_c.run_synergy_eap(
+                handle, clean_prompt, corrupted_prompt, io_token, s_token, rng, n_heads,
+                ablate_candidates=candidates, k=10)
+            circuit_set = set(circuit)
+            recovered = []
+            for score, i, j in rows:
+                if abs(score) >= 0.05 and i not in circuit_set and (j in circuit_set or j in set(dla_top)):
+                    recovered.append(i)
+                    circuit_set.add(i)
+            state["circuit"] = sorted(circuit_set)
+            state["synergy_recovered_heads"] = sorted(set(recovered))
+            state["synergy_eap_digest"] = syn_digest + f" | synergy-recovered (missed by ACDC)={sorted(set(recovered))}"
+            LOG.emit("ComponentAgent", f"L{layer_idx}: S-EAP second-order pass recovered "
+                                        f"{sorted(set(recovered))} that the first-order ACDC threshold missed "
+                                        f"-> circuit now {state['circuit']}", gap_id="sasc-noninteractive")
+        except Exception as e:
+            state["synergy_eap_digest"] = f"ERROR: {type(e).__name__}: {e}"
+        return state["synergy_eap_digest"]
+
     def do_attention_pattern():
         if not state.get("circuit"):
             return "no heads survived the ACDC threshold; nothing to inspect"
@@ -65,7 +105,8 @@ def build_component_agent(handle: adapter.ModelHandle, layer_idx: int,
                                      "effect size")
         return digest
 
-    tools = {"run_eap": do_eap, "run_acdc": do_acdc, "get_attention_pattern": do_attention_pattern}
+    tools = {"run_eap": do_eap, "run_acdc": do_acdc, "run_synergy_eap": do_synergy_eap,
+             "get_attention_pattern": do_attention_pattern}
     sae_available = _sae.supports_sae(handle.model_id)
     if sae_available:
         tools["run_sae_decompose"] = do_sae_decompose
@@ -76,6 +117,10 @@ def build_component_agent(handle: adapter.ModelHandle, layer_idx: int,
         if "acdc_digest" not in state:
             return {"action": "run_acdc", "args": {},
                      "reasoning": "confirm the EAP estimate with exact per-head patching before claiming anything"}
+        if "synergy_eap_digest" not in state:
+            return {"action": "run_synergy_eap", "args": {},
+                     "reasoning": "second-order pass: catch backup heads whose marginal effect is ~0 "
+                                  "so the first-order ACDC threshold dropped them"}
         if "attention_digest" not in state and state.get("circuit"):
             return {"action": "get_attention_pattern", "args": {},
                      "reasoning": "inspect what the surviving head actually attends to before hypothesizing"}
@@ -86,7 +131,7 @@ def build_component_agent(handle: adapter.ModelHandle, layer_idx: int,
 
     kwargs = backend_kwargs or {}
     backend = make_backend(backend_kind, policy_fn=policy_fn, **kwargs)
-    agent = Agent(backend, tools, budget, max_steps=5)
+    agent = Agent(backend, tools, budget, max_steps=7)
     agent.name = f"ComponentAgent{layer_idx}"
     agent.system_prompt = (
         f"You are the Component Agent for layer {layer_idx}. Find which specific attention heads "

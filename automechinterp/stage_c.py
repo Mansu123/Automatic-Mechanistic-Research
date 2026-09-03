@@ -44,8 +44,9 @@ def _capability_metric_fn(handle: adapter.ModelHandle):
         total = 0.0
         for prompt, domain_word, generic_word in _CAPABILITY_PROMPTS:
             batch = handle.tokenizer([prompt], return_tensors="pt").to(handle.device)
-            domain_id = handle.tokenizer.encode(" " + domain_word)[0]
-            generic_id = handle.tokenizer.encode(" " + generic_word)[0]
+            # [-1] not [0] -- see behaviors.py's _make_task for why (cross-tokenizer safety).
+            domain_id = handle.tokenizer.encode(" " + domain_word)[-1]
+            generic_id = handle.tokenizer.encode(" " + generic_word)[-1]
             with torch.no_grad():
                 logits = handle.model(**batch).logits[0, -1]
             total += (logits[domain_id] - logits[generic_id]).item()

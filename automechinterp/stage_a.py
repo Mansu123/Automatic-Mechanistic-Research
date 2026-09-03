@@ -28,6 +28,10 @@ from .agents.judge import adjudicate
 GT_NAME_MOVERS = [(9, 9), (9, 6), (10, 0)]
 GT_NEGATIVE_NAME_MOVERS = [(10, 7), (11, 10)]
 GT_S_INHIBITION = [(7, 3), (7, 9), (8, 6), (8, 10)]
+# Wang et al. 2022, Fig. 2 -- "backup name mover" heads: near-zero marginal
+# effect until a primary name mover is ablated, at which point they take over.
+# The canonical target for S-EAP / synergy-aware discovery.
+GT_BACKUP_NAME_MOVERS = [(9, 0), (9, 7), (10, 1), (10, 2), (10, 6), (10, 10), (11, 2), (11, 9)]
 GT_HEADS = GT_NAME_MOVERS + GT_NEGATIVE_NAME_MOVERS + GT_S_INHIBITION
 GT_LAYERS = sorted({l for l, _ in GT_HEADS})
 
@@ -60,8 +64,9 @@ def build_ioi_task(handle: adapter.ModelHandle, n_eval: int = 6, seed: int = 0) 
         total = 0.0
         for prompt, io_t, s_t in eval_prompts:
             batch = handle.tokenizer([prompt], return_tensors="pt").to(handle.device)
-            io_id = handle.tokenizer.encode(" " + io_t)[0]
-            s_id = handle.tokenizer.encode(" " + s_t)[0]
+            # [-1] not [0] -- see behaviors.py's _make_task for why (cross-tokenizer safety).
+            io_id = handle.tokenizer.encode(" " + io_t)[-1]
+            s_id = handle.tokenizer.encode(" " + s_t)[-1]
             with torch.no_grad():
                 logits = handle.model(**batch).logits[0, -1]
             total += (logits[io_id] - logits[s_id]).item()
@@ -71,6 +76,14 @@ def build_ioi_task(handle: adapter.ModelHandle, n_eval: int = 6, seed: int = 0) 
     n_heads = handle.model.config.num_attention_heads if hasattr(handle.model.config, "num_attention_heads") \
         else handle.model.config.n_head
 
+    # contrastive sets for the Probe / Feature / Steering agents: clean vs
+    # role-swapped (corrupted) IOI prompts differ exactly in the task variable.
+    cpos, cneg = [clean_prompt], [corrupted_prompt]
+    for _ in range(5):
+        c, x, _, _ = _make_ioi_pair(rng)
+        cpos.append(c)
+        cneg.append(x)
+
     return {
         "behavior": "Indirect Object Identification (IOI): predict the un-repeated name",
         "clean_prompt": clean_prompt,
@@ -79,6 +92,8 @@ def build_ioi_task(handle: adapter.ModelHandle, n_eval: int = 6, seed: int = 0) 
         "s_token": s_token,
         "eval_prompts": eval_prompts,
         "probe_texts": probe_texts,
+        "contrastive_pos": cpos,
+        "contrastive_neg": cneg,
         "task_metric_fn": task_metric_fn,
         "n_heads": n_heads,
     }
@@ -190,9 +205,34 @@ def run_stage_a(backend_kind: str | None = None, backend_kwargs: dict | None = N
         print(f"Judge verdict on claim    : {result['verdict']['verdict']} -- {result['verdict']['reasoning']}")
     print(f"Negative controls refuted : {negative['n_refuted']}/{negative['n_controls']} "
           f"(false-confirmation rate {negative['false_confirmation_rate']:.0%})")
-    print(f"Tool calls spent          : {result['tool_calls_spent']} / {config.GLOBAL_TOOL_CALL_BUDGET}")
+    print(f"Tool calls spent          : {result['tool_calls_spent']}")
     print(f"Cache hit rate            : {result['cache_stats']['hit_rate']:.0%} "
           f"({result['cache_stats']['hits']} hits / {result['cache_stats']['misses']} misses)")
+
+    if result.get("lens_findings") or result.get("weight_findings"):
+        print("\n" + "-" * 78)
+        print("TECHNIQUE AGENTS")
+        print("-" * 78)
+        w = result.get("weight_findings", {})
+        if w.get("tie"):
+            print(f"Weight Agent    : E/U tied={w['tie'].get('tied')}, "
+                  f"attn-out eff-rank {[r[2] for r in w.get('attn_svd', {}).get('per_layer_(top_sv, effective_rank, full_rank)', [])][:4]}")
+        sf = result.get("safety_findings", {})
+        if sf.get("refusal"):
+            print(f"Safety Agent    : refusal-dir tokens {sf['refusal'].get('direction_top_tokens', [])[:3]}; "
+                  f"copy-suppression heads {sf.get('copy_suppression', {}).get('copy_suppression_heads (head, suppressed_token, attn, DLA)', [])[:3]}")
+        for li in sorted(result.get("lens_findings", {})):
+            ll = result["lens_findings"][li]
+            pr = result.get("probe_findings", {}).get(li, {})
+            fe = result.get("feature_findings", {}).get(li, {})
+            print(f"L{li}: lens_emergence={ll.get('logit_lens', {}).get('emergence_layer')}  "
+                  f"probe_acc={pr.get('linear_probe', {}).get('cv_accuracy')}  "
+                  f"toy_SAE_L0={fe.get('toy_sae', {}).get('L0')}  "
+                  f"FVU={fe.get('toy_sae', {}).get('FVU')}")
+        for li in sorted(result.get("steering_findings", {})):
+            st = result["steering_findings"][li]
+            print(f"L{li}: steering add->{st.get('addition', {}).get('next_token_after')}  "
+                  f"LEACE erased_acc={st.get('leace', {}).get('concept_probe_acc_after_erasure')}")
 
     return {"result": result, "scored": scored, "negative_controls": negative,
             "target_model_id": target_model_id, "n_layers": handle.n_layers}

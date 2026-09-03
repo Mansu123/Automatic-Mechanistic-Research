@@ -58,7 +58,7 @@ def run_stage_b(backend_kind: str = "heuristic", target_model_id: str | None = N
         LOG.emit("System", f"--- behavior: {task['behavior']} ---")
         LOG.emit("System", f"probe: '{task['clean_prompt']}' -> expect '{task['io_token']}' "
                              f"over '{task['s_token']}'")
-        result = run_hierarchy(handle, task, backend_kind=backend_kind)
+        result = run_hierarchy(handle, task, backend_kind=backend_kind, deep_techniques=False)
         per_behavior_results.append({
             "behavior": task["behavior"], "category": task["category"],
             "flagged_layers": result["flagged_layers"], "claimed_heads": result["claimed_heads"],

@@ -1,0 +1,51 @@
+================================================================================
+MODEL: Qwen/Qwen2.5-0.5B-Instruct
+================================================================================
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights: 100%|██████████| 290/290 [00:00<00:00, 7038.48it/s]
+clean='When Bob and Tom went to the store, Bob gave a drink to'  corrupt='When Tom and Bob went to the store, Tom gave a drink to'  IO='Tom' S='Bob'
+24 layers x 14 heads
+clean logit-diff=2.938  corrupt logit-diff=-1.188
+
+[ACDC] top-8 head (fraction of gap recovered) by |effect|: L20H9: +0.530; L22H6: -0.364; L22H0: +0.348; L23H0: -0.318; L21H0: +0.273; L16H10: -0.227; L19H6: -0.212; L8H7: -0.212 | circuit(threshold=0.1)=[(4, 12), (20, 9), (21, 0), (22, 0), (23, 2)]
+
+[EAP] top-8 head (EAP linear-approx score) by |effect|: L20H9: +2.172; L22H0: +1.586; L22H6: -1.453; L23H0: -1.312; L16H10: -1.109; L21H0: +1.094; L2H9: -0.918; L19H6: -0.773
+
+candidate heads (8): [(2, 9), (16, 10), (19, 6), (20, 9), (21, 0), (22, 0), (22, 6), (23, 0)]
+
+[S-EAP] run_synergy_eap top interactions:
+  ablate L19H6 -> L20H9: Syn=+0.680 phi1=(-0.06,+2.36)
+  ablate L22H6 -> L20H9: Syn=-0.270 phi1=(-1.48,+2.36)
+  ablate L22H6 -> L22H0: Syn=-0.192 phi1=(-1.48,+1.55)
+  ablate L19H6 -> L21H0: Syn=+0.162 phi1=(-0.06,+1.56)
+  ablate L22H0 -> L20H9: Syn=+0.144 phi1=(+1.55,+2.36)
+  ablate L22H0 -> L22H6: Syn=-0.117 phi1=(+1.55,-1.48)
+  ablate L16H10 -> L22H6: Syn=+0.113 phi1=(+0.01,-1.48)
+  ablate L20H9 -> L22H6: Syn=-0.112 phi1=(+2.36,-1.48)
+  ablate L22H6 -> L22H11: Syn=+0.096 phi1=(-1.48,-0.42)
+  ablate L16H10 -> L22H0: Syn=-0.079 phi1=(+0.01,+1.55)
+  ablate L19H6 -> L22H0: Syn=+0.077 phi1=(-0.06,+1.55)
+  ablate L19H6 -> L22H6: Syn=-0.068 phi1=(-0.06,-1.48)
+  ablate L2H9 -> L4H12: Syn=-0.065 phi1=(+0.05,-0.05)  <- backup shape
+  ablate L20H9 -> L22H0: Syn=+0.064 phi1=(+2.36,+1.55)
+  ablate L16H10 -> L20H9: Syn=+0.063 phi1=(+0.01,+2.36)
+
+[VALIDATION] Spearman(S-EAP Syn, exact Syn) over 28 pairs: rho=+0.137 (p=4.9e-01) | on |Syn|: rho=+0.201 (p=3.0e-01)
+
+Top exact-synergy pairs:
+  (20, 9)+(22, 6): exact Syn=-0.250  phi1=(-0.50,+1.00)
+  (2, 9)+(20, 9): exact Syn=-0.188  phi1=(-0.06,-0.50)
+  (2, 9)+(22, 0): exact Syn=+0.188  phi1=(-0.06,-0.56)
+  (2, 9)+(21, 0): exact Syn=-0.125  phi1=(-0.06,-0.56)
+  (2, 9)+(22, 6): exact Syn=+0.125  phi1=(-0.06,+1.00)
+  (19, 6)+(22, 6): exact Syn=+0.125  phi1=(+0.88,+1.00)
+  (21, 0)+(22, 6): exact Syn=-0.125  phi1=(-0.56,+1.00)
+  (22, 0)+(22, 6): exact Syn=-0.125  phi1=(-0.56,+1.00)
+
+[FAITHFULNESS] (fraction of clean-corrupt logit-diff gap the circuit alone keeps)
+  ACDC circuit (5 heads):            +0.530
+  ACDC + top-4 synergy pairs (7 heads): +0.576
+  synergy heads added: [(2, 9), (20, 9), (21, 0), (22, 0), (22, 6)]
+
+
+wrote seap_benchmark_results.json

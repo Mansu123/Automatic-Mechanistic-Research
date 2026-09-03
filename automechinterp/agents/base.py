@@ -53,6 +53,17 @@ class AgentLog:
 LOG = AgentLog()
 
 
+def digest_dict(d, limit: int = 600) -> str:
+    """Technique functions in automechinterp/techniques/* return dicts; agent
+    tools must return a string for the ReAct evidence log. Compact-JSON it."""
+    import json
+    try:
+        s = json.dumps(d, default=str, separators=(",", ":"))
+    except Exception:
+        s = str(d)
+    return s if len(s) <= limit else s[:limit] + " …}"
+
+
 class Agent:
     name = "agent"
     system_prompt = ""

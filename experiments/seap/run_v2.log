@@ -1,0 +1,52 @@
+================================================================================
+MODEL: gpt2   (n_prompts=6, M=12)
+================================================================================
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 7053.66it/s]
+ref clean='When Alice and Sarah went to the store, Alice gave a drink to'  IO=Sarah S=Alice;  12L x 12H
+
+top-4 first-order heads : [(10, 7), (9, 9), (10, 0), (8, 10)]
+backup-regime picks     : [((1, 11), 0.01), ((11, 3), -0.017), ((1, 6), -0.022), ((2, 2), -0.022), ((0, 6), -0.024), ((9, 0), 0.032), ((8, 2), -0.033), ((1, 10), -0.033)]
+candidate roles         : [((0, 6), '?'), ((1, 6), '?'), ((1, 10), '?'), ((1, 11), '?'), ((2, 2), '?'), ((8, 2), '?'), ((8, 10), 'Sinh'), ((9, 0), 'BACKUP'), ((9, 9), 'NM'), ((10, 0), 'NM'), ((10, 7), 'negNM'), ((11, 3), '?')]
+candidates (12): [(0, 6), (1, 6), (1, 10), (1, 11), (2, 2), (8, 2), (8, 10), (9, 0), (9, 9), (10, 0), (10, 7), (11, 3)]
+  prompt 1/6 done
+  prompt 2/6 done
+  prompt 3/6 done
+  prompt 4/6 done
+  prompt 5/6 done
+  prompt 6/6 done
+
+[VALIDATION over 66 pairs, 6-prompt mean]
+  Spearman(S-EAP, exact) signed : rho=+0.103  p=4.1e-01
+  Spearman(|S-EAP|, |exact|)     : rho=+0.562  p=9.3e-07
+  pairs with exact Syn FDR q<0.10 : []
+  pairs with S-EAP    FDR q<0.10  : []
+
+[TOP S-EAP PAIRS]
+  (9, 9)+(10, 7): S-EAP=+0.105 (p=0.03 q=0.14) | exact=-0.773 (p=0.03 q=0.16) [NM+negNM]
+  (9, 9)+(10, 0): S-EAP=-0.058 (p=0.03 q=0.14) | exact=-0.053 (p=0.28 q=0.48) [NM+NM]
+  (8, 10)+(9, 9): S-EAP=-0.052 (p=0.03 q=0.14) | exact=+0.046 (p=0.12 q=0.29) [Sinh+NM]
+  (8, 2)+(9, 9): S-EAP=-0.029 (p=0.03 q=0.14) | exact=+0.006 (p=0.72 q=0.82) [?+NM]
+  (8, 10)+(10, 7): S-EAP=+0.029 (p=0.03 q=0.14) | exact=-0.205 (p=0.03 q=0.16) [Sinh+negNM]
+  (10, 0)+(10, 7): S-EAP=+0.028 (p=0.03 q=0.14) | exact=-0.018 (p=0.38 q=0.58) [NM+negNM]
+  (8, 2)+(10, 7): S-EAP=+0.016 (p=0.03 q=0.14) | exact=+0.011 (p=0.47 q=0.63) [?+negNM]
+  (8, 10)+(10, 0): S-EAP=-0.014 (p=0.03 q=0.14) | exact=+0.119 (p=0.03 q=0.16) [Sinh+NM]
+  (0, 6)+(9, 9): S-EAP=-0.011 (p=0.03 q=0.14) | exact=-0.023 (p=0.06 q=0.24) [?+NM]
+  (9, 0)+(9, 9): S-EAP=+0.006 (p=0.09 q=0.23) | exact=+0.006 (p=0.50 q=0.66) [BACKUP+NM]
+  (9, 0)+(10, 7): S-EAP=-0.006 (p=0.09 q=0.23) | exact=-0.013 (p=0.06 q=0.24) [BACKUP+negNM]
+  (9, 9)+(11, 3): S-EAP=-0.005 (p=0.28 q=0.48) | exact=-0.013 (p=0.19 q=0.36) [NM+?]
+================================================================================
+MODEL: Qwen/Qwen2.5-0.5B-Instruct   (n_prompts=6, M=12)
+================================================================================
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights: 100%|██████████| 290/290 [00:00<00:00, 6653.66it/s]
+ref clean='When Alice and Sarah went to the store, Alice gave a drink to'  IO=Sarah S=Alice;  24L x 14H
+
+top-4 first-order heads : [(23, 0), (21, 0), (22, 0), (20, 9)]
+backup-regime picks     : [((4, 2), 0.0), ((14, 8), 0.0), ((12, 1), 0.062), ((13, 4), -0.062), ((2, 13), -0.062), ((22, 2), 0.062), ((10, 5), 0.062), ((10, 12), -0.062)]
+candidates (12): [(2, 13), (4, 2), (10, 5), (10, 12), (12, 1), (13, 4), (14, 8), (20, 9), (21, 0), (22, 0), (22, 2), (23, 0)]
+  prompt 1/6 done
+  prompt 2/6 done
+  prompt 3/6 done
+  prompt 4/6 done
+/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

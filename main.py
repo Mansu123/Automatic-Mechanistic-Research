@@ -18,6 +18,10 @@ Usage:
                                                # (NOTE: published IOI ground truth only exists for
                                                # GPT-2 small -- other models still run, but
                                                # recall/precision are reported as N/A, not guessed)
+    python3 main.py --stage-d                 # write one report per behavior to
+                                               # human_review/reports/ for the 3 human experts
+    python3 main.py --stage-d --ai-judge anthropic  # also auto-score every report with RubricJudge
+                                               # (needs ANTHROPIC_API_KEY; --ai-judge openai for GPT)
 
 Model roles (automechinterp/config.py), overridable via env vars OR the
 --target-model / --backend flags below:
@@ -60,12 +64,23 @@ def main():
     parser.add_argument("--ablations", action="store_true",
                          help="run Sec. 4.7 ablation studies (hierarchy, verification, Network "
                               "Analyst flagging strategy) instead of Stage A, and exit")
+    parser.add_argument("--techniques", action="store_true",
+                         help="run every technique in automechinterp/techniques/* on the target "
+                              "model + IOI task, write a Markdown+JSON report, and exit")
     parser.add_argument("--stage-b", action="store_true",
                          help="run Stage B (Sec. 4.4): multi-behavior Layer Atlas, instead of "
                               "Stage A, and exit")
     parser.add_argument("--stage-c", action="store_true",
                          help="run Stage C (Sec. 4.5): cross-model layer diff against a locally "
                               "fine-tuned biomedical stand-in, instead of Stage A, and exit")
+    parser.add_argument("--stage-d", action="store_true",
+                         help="run Stage D: evaluation pipeline -- writes one report per behavior to "
+                              "human_review/reports/, optionally AI-scored (see --ai-judge), instead "
+                              "of Stage A, and exit")
+    parser.add_argument("--ai-judge", default=None, choices=["openai", "anthropic"],
+                         help="with --stage-d, also score every report with RubricJudge on this "
+                              "top-tier backend (requires the matching API key); omit to only write "
+                              "reports for human review without automatic scoring")
     args = parser.parse_args()
 
     if args.gap_matrix:
@@ -80,6 +95,11 @@ def main():
         _run_ablations(args.graph, args.output_dir)
         return
 
+    if args.techniques:
+        from automechinterp.techniques.runner import run_all
+        run_all(args.target_model or config.TARGET_MODEL_ID, device=config.DEVICE)
+        return
+
     if args.stage_b:
         _run_stage_b(args.backend or config.LLM_BACKEND, args.target_model or config.TARGET_MODEL_ID,
                      args.graph, args.output_dir)
@@ -87,6 +107,11 @@ def main():
 
     if args.stage_c:
         _run_stage_c(args.graph, args.output_dir)
+        return
+
+    if args.stage_d:
+        _run_stage_d(args.backend or config.LLM_BACKEND, args.target_model or config.TARGET_MODEL_ID,
+                     args.ai_judge)
         return
 
     print("Related-work gaps this run is designed to close (Sec. 2 of the proposal):\n")
@@ -128,6 +153,15 @@ def _run_stage_b(backend_kind: str, target_model_id: str, graph: bool, output_di
         png_path, json_path = plot_stage_b_results(result, out_dir=output_dir)
         print(f"\nSaved graph -> {png_path}")
         print(f"Saved raw results -> {json_path}")
+
+
+def _run_stage_d(backend_kind: str, target_model_id: str, ai_judge_backend: str | None):
+    from automechinterp.stage_d_eval import run_stage_d, save_stage_d_json
+    result = run_stage_d(backend_kind=backend_kind, target_model_id=target_model_id,
+                          ai_judge_backend=ai_judge_backend)
+    json_path = save_stage_d_json(result)
+    print(f"\nSaved Stage D results -> {json_path}")
+    print(f"Reports for human review -> {result['reports_dir']}")
 
 
 def _run_ablations(graph: bool, output_dir: str):

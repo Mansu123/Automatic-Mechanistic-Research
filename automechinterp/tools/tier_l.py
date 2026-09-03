@@ -56,8 +56,9 @@ def patch_layer(handle: adapter.ModelHandle, layer_idx: int,
     """Does patching this whole layer flip the output toward the clean
     answer? Coarse causal localization before any component-level work."""
     def metric_fn(logits: torch.Tensor) -> float:
-        clean_id = handle.tokenizer.encode(" " + clean_token.strip())[0]
-        corr_id = handle.tokenizer.encode(" " + corrupted_token.strip())[0]
+        # [-1] not [0] -- see behaviors.py's _make_task for why (cross-tokenizer safety).
+        clean_id = handle.tokenizer.encode(" " + clean_token.strip())[-1]
+        corr_id = handle.tokenizer.encode(" " + corrupted_token.strip())[-1]
         last = logits[0, -1]
         return float((last[clean_id] - last[corr_id]).item())
 
