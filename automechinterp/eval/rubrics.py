@@ -188,6 +188,37 @@ SCALING_RUBRIC = Rubric(
 )
 
 
+# ---------------------------------------------------------------------------
+# Method-comparison rubrics (appended when is_method_comparison=True).
+# Applied when the report describes a head-to-head evaluation of multiple
+# circuit-discovery methods (Subnetwork Probing, MechRL, ACD, Circuit Tracing,
+# and the reference ACDC+DLA system).
+# ---------------------------------------------------------------------------
+METHOD_COMPARISON_RUBRICS: list[Rubric] = [
+    Rubric(
+        "circuit_recovery_efficiency",
+        "Circuit recovery efficiency",
+        "Does the method discover the core circuit using fewer budget units (forward passes / "
+        "gradient steps) than the reference ACDC+DLA system while achieving comparable or better "
+        "metric recovery?",
+    ),
+    Rubric(
+        "cross_method_agreement",
+        "Cross-method agreement",
+        "Do the circuits found by independent methods (Subnetwork Probing, MechRL, ACD, Circuit "
+        "Tracing, reference) converge on the same component(s), and does the report characterize "
+        "which components are robust across methods vs. method-specific artefacts?",
+    ),
+    Rubric(
+        "novel_circuit_quality",
+        "Novel circuit quality",
+        "For tasks without an external oracle (e.g. agentic tracing), does the discovered circuit "
+        "causally account for the behavior when complement-ablated, and does ablating the circuit "
+        "alone significantly degrade performance while leaving the complement in place does not?",
+    ),
+]
+
+
 def angle_number_from_category(category: str) -> int | None:
     """category looks like 'Angle 3: Arithmetic' -- see behaviors.py."""
     if not category.startswith("Angle "):
@@ -198,23 +229,29 @@ def angle_number_from_category(category: str) -> int | None:
         return None
 
 
-def rubrics_for_report(category: str, is_part_of_scaling_sweep: bool = False) -> list[Rubric]:
+def rubrics_for_report(category: str, is_part_of_scaling_sweep: bool = False,
+                        is_method_comparison: bool = False) -> list[Rubric]:
     """The 7 core rubrics + this report's angle-specific add-ons (+ scaling
-    coherence when this report is one of several sizes of the same task)."""
+    coherence when this report is one of several sizes of the same task, +
+    method-comparison rubrics when this report covers a multi-method evaluation)."""
     angle = angle_number_from_category(category)
     rubrics = list(CORE_RUBRICS) + list(ANGLE_RUBRICS.get(angle, []))
     if is_part_of_scaling_sweep:
         rubrics = rubrics + [SCALING_RUBRIC]
+    if is_method_comparison:
+        rubrics = rubrics + METHOD_COMPARISON_RUBRICS
     return rubrics
 
 
 def all_rubrics() -> list[Rubric]:
-    """Every rubric that exists, core + all angle-specific + scaling -- the
-    flat ~15-item list the mentor's plan targets, used to build the human
-    review sheet (which needs every possible column up front)."""
+    """Every rubric that exists, core + all angle-specific + scaling +
+    method-comparison -- the flat list used to build the human review sheet
+    (which needs every possible column up front)."""
     seen: dict[str, Rubric] = {r.id: r for r in CORE_RUBRICS}
     for group in ANGLE_RUBRICS.values():
         for r in group:
             seen[r.id] = r
     seen[SCALING_RUBRIC.id] = SCALING_RUBRIC
+    for r in METHOD_COMPARISON_RUBRICS:
+        seen[r.id] = r
     return list(seen.values())
