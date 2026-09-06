@@ -23,12 +23,14 @@ from .subnetwork_probing import run_subnetwork_probing
 from .acd import run_acd
 from .mechrl import run_mechrl
 from .circuit_tracing import run_circuit_tracing
+from .transformerlens_acdc import run_transformerlens_acdc
 
 ALL_METHODS: dict = {
-    "subnetwork_probing": run_subnetwork_probing,
-    "acd": run_acd,
-    "mechrl": run_mechrl,
-    "circuit_tracing": run_circuit_tracing,
+    "subnetwork_probing":   run_subnetwork_probing,
+    "acd":                  run_acd,
+    "mechrl":               run_mechrl,
+    "circuit_tracing":      run_circuit_tracing,
+    "transformerlens_acdc": run_transformerlens_acdc,
 }
 
 __all__ = [
@@ -38,5 +40,7 @@ __all__ = [
     "run_acd",
     "run_mechrl",
     "run_circuit_tracing",
+    "run_transformerlens_acdc",
 ]
+
 

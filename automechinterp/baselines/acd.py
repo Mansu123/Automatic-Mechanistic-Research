@@ -75,18 +75,46 @@ def _bayesian_update(prior: float, observation: float,
     return unnorm_in / total
 
 
+def _pad_to_same_length(tokenizer, ids_a: torch.Tensor, mask_a: torch.Tensor,
+                         ids_b: torch.Tensor, mask_b: torch.Tensor, device):
+    """Left-pad the shorter sequence so both have equal length.
+    run_with_head_patch uses `clean_slice[:, -seq_len:, :]` which fails when
+    clean seq_len < corrupted seq_len — this prevents that mismatch.
+    """
+    la, lb = ids_a.shape[1], ids_b.shape[1]
+    if la == lb:
+        return ids_a, mask_a, ids_b, mask_b
+    pad_id = tokenizer.pad_token_id or tokenizer.eos_token_id or 0
+    if la < lb:
+        pad = torch.full((1, lb - la), pad_id, dtype=ids_a.dtype, device=device)
+        ids_a  = torch.cat([pad, ids_a],  dim=1)
+        mask_a = torch.cat([torch.zeros_like(pad), mask_a], dim=1)
+    else:
+        pad = torch.full((1, la - lb), pad_id, dtype=ids_b.dtype, device=device)
+        ids_b  = torch.cat([pad, ids_b],  dim=1)
+        mask_b = torch.cat([torch.zeros_like(pad), mask_b], dim=1)
+    return ids_a, mask_a, ids_b, mask_b
+
+
 def _probe_head(handle: adapter.ModelHandle, layer_idx: int, head_idx: int,
                 clean_input_ids: torch.Tensor, clean_attention_mask: torch.Tensor,
                 corrupted_input_ids: torch.Tensor, corrupted_attention_mask: torch.Tensor,
                 io_id: int, s_id: int, clean_m: float, corr_m: float) -> float:
     """Probe head (l,h) via activation patching; return fraction of gap recovered."""
+    # Pad to equal length to avoid the as_strided seq-len mismatch in run_with_head_patch
+    c_ids, c_mask, x_ids, x_mask = _pad_to_same_length(
+        handle.tokenizer,
+        clean_input_ids, clean_attention_mask,
+        corrupted_input_ids, corrupted_attention_mask,
+        handle.device,
+    )
     metric_fn = lambda logits: float((logits[0, -1, io_id] - logits[0, -1, s_id]).item())
     patched_m = adapter.run_with_head_patch(
         handle, layer_idx, head_idx,
-        clean_input_ids, clean_attention_mask,
-        corrupted_input_ids, corrupted_attention_mask,
+        c_ids, c_mask, x_ids, x_mask,
         metric_fn,
     )
+
     denom = clean_m - corr_m
     return (patched_m - corr_m) / denom if abs(denom) > 1e-8 else 0.0
 
