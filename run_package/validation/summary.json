@@ -1,0 +1,72 @@
+{
+  "date": "2026-09-06",
+  "source_sha256": "71f2fe7e24b03a83eef57c5de7ee37c640a313e0d81088fdc225dae4d8851295",
+  "models": 22,
+  "behaviors": 203,
+  "angles": {
+    "1": 7,
+    "2": 7,
+    "3": 9,
+    "4": 7,
+    "5": 5,
+    "6": 7,
+    "7": 5,
+    "8": 6,
+    "9": 5,
+    "10": 5,
+    "11": 5,
+    "12": 5,
+    "13": 10,
+    "14": 10,
+    "15": 10,
+    "16": 10,
+    "17": 10,
+    "18": 10,
+    "19": 10,
+    "20": 10,
+    "21": 10,
+    "22": 10,
+    "23": 10,
+    "24": 10,
+    "25": 10
+  },
+  "expected_gpu_jobs_per_seed": 4466,
+  "unit_tests_passed": 32,
+  "real_tokenizer_cases_passed": 4466,
+  "bf16_fixture_pipeline_cases_passed": 1827,
+  "fixture_architectures": [
+    "gemma2",
+    "gpt2",
+    "gpt_neo",
+    "gpt_neox",
+    "llama",
+    "mistral",
+    "opt",
+    "phi",
+    "qwen2"
+  ],
+  "real_checkpoint_smoke": {
+    "model": "gpt2",
+    "device": "cpu",
+    "dtype": "float32",
+    "jobs_completed": 1,
+    "run_id": "f1577d3731558ab6bd79",
+    "checkpoint_and_persistence_restore": "passed",
+    "seap_status": "completed"
+  },
+  "pending": [
+    "Full A100 pretrained-checkpoint sweep",
+    "Independent semantic/stress-data validation",
+    "Authenticated GLM scoring",
+    "Independent human scoring and judge-validation study"
+  ],
+  "judge_public_catalog": {
+    "id": "z-ai/glm-5.2:free",
+    "prompt_price": 0,
+    "completion_price": 0,
+    "context_length": 256000,
+    "structured_responses_advertised": true,
+    "authenticated_call_tested": false,
+    "source": "https://openrouter.ai/api/v1/models"
+  }
+}

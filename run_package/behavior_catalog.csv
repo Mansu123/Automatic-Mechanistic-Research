@@ -1,0 +1,204 @@
+behavior_id,angle,angle_name,required_angle_controls,discovery_pairs,evaluation_pairs,independent_stress_validated
+ioi_behavior,1,Linguistic Structure (Syntax & Coreference),"Entity/order swaps, distractors, long-distance dependencies, agreement and coreference contrasts.",6,20,False
+agreement_behavior,1,Linguistic Structure (Syntax & Coreference),"Entity/order swaps, distractors, long-distance dependencies, agreement and coreference contrasts.",6,19,False
+subject_extraction_behavior,1,Linguistic Structure (Syntax & Coreference),"Entity/order swaps, distractors, long-distance dependencies, agreement and coreference contrasts.",6,19,False
+passive_voice_behavior,1,Linguistic Structure (Syntax & Coreference),"Entity/order swaps, distractors, long-distance dependencies, agreement and coreference contrasts.",6,19,False
+reflexive_pronoun_behavior,1,Linguistic Structure (Syntax & Coreference),"Entity/order swaps, distractors, long-distance dependencies, agreement and coreference contrasts.",5,13,False
+relative_clause_behavior,1,Linguistic Structure (Syntax & Coreference),"Entity/order swaps, distractors, long-distance dependencies, agreement and coreference contrasts.",6,19,False
+coordination_behavior,1,Linguistic Structure (Syntax & Coreference),"Entity/order swaps, distractors, long-distance dependencies, agreement and coreference contrasts.",6,19,False
+factual_recall_behavior,2,Factual & World Knowledge,"Verified factual answers, held-out entities, matched-frequency distractors; isolate hops only for actual multi-hop tasks.",6,13,False
+currency_knowledge_behavior,2,Factual & World Knowledge,"Verified factual answers, held-out entities, matched-frequency distractors; isolate hops only for actual multi-hop tasks.",6,10,False
+element_symbol_behavior,2,Factual & World Knowledge,"Verified factual answers, held-out entities, matched-frequency distractors; isolate hops only for actual multi-hop tasks.",6,12,False
+language_knowledge_behavior,2,Factual & World Knowledge,"Verified factual answers, held-out entities, matched-frequency distractors; isolate hops only for actual multi-hop tasks.",1,1,False
+continent_knowledge_behavior,2,Factual & World Knowledge,"Verified factual answers, held-out entities, matched-frequency distractors; isolate hops only for actual multi-hop tasks.",1,1,False
+planet_knowledge_behavior,2,Factual & World Knowledge,"Verified factual answers, held-out entities, matched-frequency distractors; isolate hops only for actual multi-hop tasks.",1,1,False
+landmark_country_behavior,2,Factual & World Knowledge,"Verified factual answers, held-out entities, matched-frequency distractors; isolate hops only for actual multi-hop tasks.",1,1,False
+arithmetic_addition_behavior,3,Reasoning & Arithmetic,"New operands and operators, direction changes, algorithmic versus memorized solutions.",6,12,False
+magnitude_comparison_behavior,3,Reasoning & Arithmetic,"New operands and operators, direction changes, algorithmic versus memorized solutions.",6,19,False
+arithmetic_subtraction_behavior,3,Reasoning & Arithmetic,"New operands and operators, direction changes, algorithmic versus memorized solutions.",1,5,False
+arithmetic_multiplication_behavior,3,Reasoning & Arithmetic,"New operands and operators, direction changes, algorithmic versus memorized solutions.",1,2,False
+temporal_reasoning_behavior,3,Reasoning & Arithmetic,"New operands and operators, direction changes, algorithmic versus memorized solutions.",1,1,False
+spatial_reasoning_behavior,3,Reasoning & Arithmetic,"New operands and operators, direction changes, algorithmic versus memorized solutions.",1,1,False
+parity_reasoning_behavior,3,Reasoning & Arithmetic,"New operands and operators, direction changes, algorithmic versus memorized solutions.",1,1,False
+ordinal_reasoning_behavior,3,Reasoning & Arithmetic,"New operands and operators, direction changes, algorithmic versus memorized solutions.",2,6,False
+arithmetic_division_behavior,3,Reasoning & Arithmetic,"New operands and operators, direction changes, algorithmic versus memorized solutions.",1,1,False
+induction_copying_behavior,4,In-Context Learning / Induction,"New sequences and mappings, repeated-pattern controls, context and dependency-distance changes.",6,19,False
+translation_induction_behavior,4,In-Context Learning / Induction,"New sequences and mappings, repeated-pattern controls, context and dependency-distance changes.",1,1,False
+capitalization_induction_behavior,4,In-Context Learning / Induction,"New sequences and mappings, repeated-pattern controls, context and dependency-distance changes.",1,1,False
+antonym_induction_behavior,4,In-Context Learning / Induction,"New sequences and mappings, repeated-pattern controls, context and dependency-distance changes.",1,1,False
+first_letter_induction_behavior,4,In-Context Learning / Induction,"New sequences and mappings, repeated-pattern controls, context and dependency-distance changes.",1,1,False
+number_sequence_induction_behavior,4,In-Context Learning / Induction,"New sequences and mappings, repeated-pattern controls, context and dependency-distance changes.",1,3,False
+alphabet_sequence_induction_behavior,4,In-Context Learning / Induction,"New sequences and mappings, repeated-pattern controls, context and dependency-distance changes.",1,2,False
+gender_bias_behavior,5,Social Bias & Fairness,Balanced demographic substitutions and matched contexts; association is not normative correctness.,6,19,False
+age_bias_behavior,5,Social Bias & Fairness,Balanced demographic substitutions and matched contexts; association is not normative correctness.,1,1,False
+nationality_bias_behavior,5,Social Bias & Fairness,Balanced demographic substitutions and matched contexts; association is not normative correctness.,1,1,False
+appearance_bias_behavior,5,Social Bias & Fairness,Balanced demographic substitutions and matched contexts; association is not normative correctness.,1,1,False
+occupation_pronoun_bias_behavior,5,Social Bias & Fairness,Balanced demographic substitutions and matched contexts; association is not normative correctness.,1,1,False
+antonym_behavior,6,Lexical Semantics & Word Sense,"Sense and context changes, frequency controls, lexical versus relational effects.",6,12,False
+category_membership_behavior,6,Lexical Semantics & Word Sense,"Sense and context changes, frequency controls, lexical versus relational effects.",6,8,False
+synonym_behavior,6,Lexical Semantics & Word Sense,"Sense and context changes, frequency controls, lexical versus relational effects.",1,1,False
+part_whole_behavior,6,Lexical Semantics & Word Sense,"Sense and context changes, frequency controls, lexical versus relational effects.",1,1,False
+animal_young_behavior,6,Lexical Semantics & Word Sense,"Sense and context changes, frequency controls, lexical versus relational effects.",1,1,False
+hypernym_instance_behavior,6,Lexical Semantics & Word Sense,"Sense and context changes, frequency controls, lexical versus relational effects.",1,1,False
+word_sense_disambiguation_behavior,6,Lexical Semantics & Word Sense,"Sense and context changes, frequency controls, lexical versus relational effects.",1,1,False
+sentiment_polarity_behavior,7,Sentiment & Emotion,"Negation, mixed valence, lexical controls and context-dependent sentiment.",1,1,False
+emotion_classification_behavior,7,Sentiment & Emotion,"Negation, mixed valence, lexical controls and context-dependent sentiment.",1,1,False
+review_rating_behavior,7,Sentiment & Emotion,"Negation, mixed valence, lexical controls and context-dependent sentiment.",1,1,False
+tone_detection_behavior,7,Sentiment & Emotion,"Negation, mixed valence, lexical controls and context-dependent sentiment.",1,1,False
+praise_criticism_behavior,7,Sentiment & Emotion,"Negation, mixed valence, lexical controls and context-dependent sentiment.",1,1,False
+python_output_behavior,8,Code & Formal Reasoning,"Executable expected results, operator/variable changes, syntax versus semantic controls.",1,1,False
+boolean_logic_behavior,8,Code & Formal Reasoning,"Executable expected results, operator/variable changes, syntax versus semantic controls.",1,1,False
+variable_type_behavior,8,Code & Formal Reasoning,"Executable expected results, operator/variable changes, syntax versus semantic controls.",1,1,False
+list_index_behavior,8,Code & Formal Reasoning,"Executable expected results, operator/variable changes, syntax versus semantic controls.",1,1,False
+comparison_operator_behavior,8,Code & Formal Reasoning,"Executable expected results, operator/variable changes, syntax versus semantic controls.",1,1,False
+string_method_behavior,8,Code & Formal Reasoning,"Executable expected results, operator/variable changes, syntax versus semantic controls.",1,1,False
+object_affordance_behavior,9,Commonsense & Physical Reasoning,Physical/causal relation changes and matched association controls.,1,1,False
+causal_commonsense_behavior,9,Commonsense & Physical Reasoning,Physical/causal relation changes and matched association controls.,1,1,False
+material_property_behavior,9,Commonsense & Physical Reasoning,Physical/causal relation changes and matched association controls.,1,1,False
+object_purpose_behavior,9,Commonsense & Physical Reasoning,Physical/causal relation changes and matched association controls.,1,1,False
+size_commonsense_behavior,9,Commonsense & Physical Reasoning,Physical/causal relation changes and matched association controls.,1,1,False
+french_number_behavior,10,Multilingual / Cross-lingual,"Multiple languages and tokenizations, parallel meanings, language-specific uncertainty.",1,1,False
+spanish_vocab_behavior,10,Multilingual / Cross-lingual,"Multiple languages and tokenizations, parallel meanings, language-specific uncertainty.",1,1,False
+german_color_behavior,10,Multilingual / Cross-lingual,"Multiple languages and tokenizations, parallel meanings, language-specific uncertainty.",1,1,False
+italian_vocab_behavior,10,Multilingual / Cross-lingual,"Multiple languages and tokenizations, parallel meanings, language-specific uncertainty.",1,1,False
+language_identification_behavior,10,Multilingual / Cross-lingual,"Multiple languages and tokenizations, parallel meanings, language-specific uncertainty.",1,1,False
+pronoun_coreference_behavior,11,Entity Tracking & Discourse,"Entity identity and ordering swaps, distractors and discourse distance.",2,6,False
+possession_tracking_behavior,11,Entity Tracking & Discourse,"Entity identity and ordering swaps, distractors and discourse distance.",1,1,False
+location_tracking_behavior,11,Entity Tracking & Discourse,"Entity identity and ordering swaps, distractors and discourse distance.",1,1,False
+role_tracking_behavior,11,Entity Tracking & Discourse,"Entity identity and ordering swaps, distractors and discourse distance.",2,6,False
+recency_tracking_behavior,11,Entity Tracking & Discourse,"Entity identity and ordering swaps, distractors and discourse distance.",2,6,False
+negation_behavior,12,Negation & Logic,"Operator, quantifier and negation-scope flips with matched lexical content.",1,1,False
+double_negation_behavior,12,Negation & Logic,"Operator, quantifier and negation-scope flips with matched lexical content.",2,6,False
+quantifier_reasoning_behavior,12,Negation & Logic,"Operator, quantifier and negation-scope flips with matched lexical content.",1,1,False
+conditional_reasoning_behavior,12,Negation & Logic,"Operator, quantifier and negation-scope flips with matched lexical content.",1,1,False
+contradiction_detection_behavior,12,Negation & Logic,"Operator, quantifier and negation-scope flips with matched lexical content.",1,1,False
+more_vs_fewer_behavior,13,Quantitative Comparison,"Reverse comparison direction, swap operands and hold out numeric values.",1,3,False
+heavier_vs_lighter_behavior,13,Quantitative Comparison,"Reverse comparison direction, swap operands and hold out numeric values.",1,3,False
+taller_vs_shorter_behavior,13,Quantitative Comparison,"Reverse comparison direction, swap operands and hold out numeric values.",1,3,False
+faster_vs_slower_behavior,13,Quantitative Comparison,"Reverse comparison direction, swap operands and hold out numeric values.",1,3,False
+hotter_vs_colder_behavior,13,Quantitative Comparison,"Reverse comparison direction, swap operands and hold out numeric values.",1,3,False
+older_vs_younger_behavior,13,Quantitative Comparison,"Reverse comparison direction, swap operands and hold out numeric values.",1,3,False
+nearer_vs_farther_behavior,13,Quantitative Comparison,"Reverse comparison direction, swap operands and hold out numeric values.",1,3,False
+fraction_magnitude_behavior,13,Quantitative Comparison,"Reverse comparison direction, swap operands and hold out numeric values.",1,3,False
+percentage_of_a_number_behavior,13,Quantitative Comparison,"Reverse comparison direction, swap operands and hold out numeric values.",1,3,False
+grouped_counts_behavior,13,Quantitative Comparison,"Reverse comparison direction, swap operands and hold out numeric values.",1,3,False
+month_after_behavior,14,Temporal & Sequential Ordering,Successor/predecessor reversal and new sequences rather than fixed-list recall.,1,3,False
+month_before_behavior,14,Temporal & Sequential Ordering,Successor/predecessor reversal and new sequences rather than fixed-list recall.,1,3,False
+season_after_behavior,14,Temporal & Sequential Ordering,Successor/predecessor reversal and new sequences rather than fixed-list recall.,1,3,False
+day_before_behavior,14,Temporal & Sequential Ordering,Successor/predecessor reversal and new sequences rather than fixed-list recall.,1,3,False
+earlier_vs_later_year_behavior,14,Temporal & Sequential Ordering,Successor/predecessor reversal and new sequences rather than fixed-list recall.,1,3,False
+part_of_day_order_behavior,14,Temporal & Sequential Ordering,Successor/predecessor reversal and new sequences rather than fixed-list recall.,1,3,False
+decade_ordering_behavior,14,Temporal & Sequential Ordering,Successor/predecessor reversal and new sequences rather than fixed-list recall.,1,3,False
+hour_after_on_a_clock_behavior,14,Temporal & Sequential Ordering,Successor/predecessor reversal and new sequences rather than fixed-list recall.,1,3,False
+calendar_quarter_behavior,14,Temporal & Sequential Ordering,Successor/predecessor reversal and new sequences rather than fixed-list recall.,1,3,False
+life_cycle_order_behavior,14,Temporal & Sequential Ordering,Successor/predecessor reversal and new sequences rather than fixed-list recall.,1,3,False
+gendered_pairs_behavior,15,Analogical Reasoning,Transfer the relation to new A:B pairs and matched unrelated distractors.,1,3,False
+animal_to_young_behavior,15,Analogical Reasoning,Transfer the relation to new A:B pairs and matched unrelated distractors.,1,3,False
+opposites_behavior,15,Analogical Reasoning,Transfer the relation to new A:B pairs and matched unrelated distractors.,1,3,False
+capital_to_country_behavior,15,Analogical Reasoning,Transfer the relation to new A:B pairs and matched unrelated distractors.,1,3,False
+object_to_cover_behavior,15,Analogical Reasoning,Transfer the relation to new A:B pairs and matched unrelated distractors.,1,3,False
+animal_to_movement_behavior,15,Analogical Reasoning,Transfer the relation to new A:B pairs and matched unrelated distractors.,1,3,False
+creator_to_work_behavior,15,Analogical Reasoning,Transfer the relation to new A:B pairs and matched unrelated distractors.,1,3,False
+degree_of_adjective_behavior,15,Analogical Reasoning,Transfer the relation to new A:B pairs and matched unrelated distractors.,1,3,False
+worker_to_workplace_behavior,15,Analogical Reasoning,Transfer the relation to new A:B pairs and matched unrelated distractors.,1,3,False
+part_to_whole_behavior,15,Analogical Reasoning,Transfer the relation to new A:B pairs and matched unrelated distractors.,1,3,False
+irregular_plural_behavior,16,Morphology & Word Formation,Held-out stems and productive forms; separate irregular-form retrieval.,1,3,False
+irregular_past_tense_behavior,16,Morphology & Word Formation,Held-out stems and productive forms; separate irregular-form retrieval.,1,3,False
+irregular_comparative_behavior,16,Morphology & Word Formation,Held-out stems and productive forms; separate irregular-form retrieval.,1,3,False
+superlative_behavior,16,Morphology & Word Formation,Held-out stems and productive forms; separate irregular-form retrieval.,1,3,False
+_ness_nominalization_behavior,16,Morphology & Word Formation,Held-out stems and productive forms; separate irregular-form retrieval.,1,3,False
+un__prefixation_behavior,16,Morphology & Word Formation,Held-out stems and productive forms; separate irregular-form retrieval.,1,3,False
+_er_agent_noun_behavior,16,Morphology & Word Formation,Held-out stems and productive forms; separate irregular-form retrieval.,1,3,False
+_ly_adverb_behavior,16,Morphology & Word Formation,Held-out stems and productive forms; separate irregular-form retrieval.,1,3,False
+past_participle_behavior,16,Morphology & Word Formation,Held-out stems and productive forms; separate irregular-form retrieval.,1,3,False
+compound_head_behavior,16,Morphology & Word Formation,Held-out stems and productive forms; separate irregular-form retrieval.,1,3,False
+scalar_implicature__some__behavior,17,Pragmatics & Implicature,Literal versus implied meaning with matched words and varied speaker context.,1,3,False
+sarcasm_behavior,17,Pragmatics & Implicature,Literal versus implied meaning with matched words and varied speaker context.,1,3,False
+indirect_request_behavior,17,Pragmatics & Implicature,Literal versus implied meaning with matched words and varied speaker context.,1,3,False
+understatement_behavior,17,Pragmatics & Implicature,Literal versus implied meaning with matched words and varied speaker context.,1,3,False
+presupposition_behavior,17,Pragmatics & Implicature,Literal versus implied meaning with matched words and varied speaker context.,1,3,False
+relevance_answer_behavior,17,Pragmatics & Implicature,Literal versus implied meaning with matched words and varied speaker context.,1,3,False
+politeness_register_behavior,17,Pragmatics & Implicature,Literal versus implied meaning with matched words and varied speaker context.,1,3,False
+conversational_contrast__but__behavior,17,Pragmatics & Implicature,Literal versus implied meaning with matched words and varied speaker context.,1,3,False
+implied_comparison_behavior,17,Pragmatics & Implicature,Literal versus implied meaning with matched words and varied speaker context.,1,3,False
+answer_to_yes_no_as_refusal_behavior,17,Pragmatics & Implicature,Literal versus implied meaning with matched words and varied speaker context.,1,3,False
+composition_of_water_behavior,18,Scientific & Technical Knowledge,Source-checked scientific relations; isolate intermediate hops where relevant.,1,3,False
+photosynthesis_behavior,18,Scientific & Technical Knowledge,Source-checked scientific relations; isolate intermediate hops where relevant.,1,3,False
+the_cell_behavior,18,Scientific & Technical Knowledge,Source-checked scientific relations; isolate intermediate hops where relevant.,1,3,False
+astronomy_basics_behavior,18,Scientific & Technical Knowledge,Source-checked scientific relations; isolate intermediate hops where relevant.,1,3,False
+states_of_matter_behavior,18,Scientific & Technical Knowledge,Source-checked scientific relations; isolate intermediate hops where relevant.,1,3,False
+forces_and_motion_behavior,18,Scientific & Technical Knowledge,Source-checked scientific relations; isolate intermediate hops where relevant.,1,3,False
+the_human_body_behavior,18,Scientific & Technical Knowledge,Source-checked scientific relations; isolate intermediate hops where relevant.,1,3,False
+genetics_behavior,18,Scientific & Technical Knowledge,Source-checked scientific relations; isolate intermediate hops where relevant.,1,3,False
+chemistry_basics_behavior,18,Scientific & Technical Knowledge,Source-checked scientific relations; isolate intermediate hops where relevant.,1,3,False
+energy_and_electricity_behavior,18,Scientific & Technical Knowledge,Source-checked scientific relations; isolate intermediate hops where relevant.,1,3,False
+longest_river_behavior,19,Geography & Spatial Knowledge,Geographic relation changes and place-frequency/co-occurrence controls.,1,3,False
+largest_ocean_behavior,19,Geography & Spatial Knowledge,Geographic relation changes and place-frequency/co-occurrence controls.,1,3,False
+highest_mountain_behavior,19,Geography & Spatial Knowledge,Geographic relation changes and place-frequency/co-occurrence controls.,1,3,False
+largest_hot_desert_behavior,19,Geography & Spatial Knowledge,Geographic relation changes and place-frequency/co-occurrence controls.,1,3,False
+most_populous_continent_behavior,19,Geography & Spatial Knowledge,Geographic relation changes and place-frequency/co-occurrence controls.,1,3,False
+largest_country_by_area_behavior,19,Geography & Spatial Knowledge,Geographic relation changes and place-frequency/co-occurrence controls.,1,3,False
+hemispheres_and_the_equator_behavior,19,Geography & Spatial Knowledge,Geographic relation changes and place-frequency/co-occurrence controls.,1,3,False
+country_and_continent_behavior,19,Geography & Spatial Knowledge,Geographic relation changes and place-frequency/co-occurrence controls.,1,3,False
+seas_and_lakes_behavior,19,Geography & Spatial Knowledge,Geographic relation changes and place-frequency/co-occurrence controls.,1,3,False
+directions_and_navigation_behavior,19,Geography & Spatial Knowledge,Geographic relation changes and place-frequency/co-occurrence controls.,1,3,False
+playwright_of_romeo_and_juliet_behavior,20,"Arts, Literature & Culture",Creator/work attribution with source-checked labels and matched-frequency distractors.,1,3,False
+painter_of_the_mona_lisa_behavior,20,"Arts, Literature & Culture",Creator/work attribution with source-checked labels and matched-frequency distractors.,1,3,False
+composer_of_the_ninth_symphony_behavior,20,"Arts, Literature & Culture",Creator/work attribution with source-checked labels and matched-frequency distractors.,1,3,False
+creator_of_sherlock_holmes_behavior,20,"Arts, Literature & Culture",Creator/work attribution with source-checked labels and matched-frequency distractors.,1,3,False
+author_of_war_and_peace_behavior,20,"Arts, Literature & Culture",Creator/work attribution with source-checked labels and matched-frequency distractors.,1,3,False
+author_of_harry_potter_behavior,20,"Arts, Literature & Culture",Creator/work attribution with source-checked labels and matched-frequency distractors.,1,3,False
+sculptor_of_david_behavior,20,"Arts, Literature & Culture",Creator/work attribution with source-checked labels and matched-frequency distractors.,1,3,False
+painter_of_starry_night_behavior,20,"Arts, Literature & Culture",Creator/work attribution with source-checked labels and matched-frequency distractors.,1,3,False
+opera_and_ballet_behavior,20,"Arts, Literature & Culture",Creator/work attribution with source-checked labels and matched-frequency distractors.,1,3,False
+famous_first_lines_and_works_behavior,20,"Arts, Literature & Culture",Creator/work attribution with source-checked labels and matched-frequency distractors.,1,3,False
+study_of_money_and_markets_behavior,21,"Economics, Politics & Law",Definition versus giveaway context; explicit domain and temporal scope.,1,3,False
+branches_of_government_behavior,21,"Economics, Politics & Law",Definition versus giveaway context; explicit domain and temporal scope.,1,3,False
+rising_prices_behavior,21,"Economics, Politics & Law",Definition versus giveaway context; explicit domain and temporal scope.,1,3,False
+founding_legal_document_behavior,21,"Economics, Politics & Law",Definition versus giveaway context; explicit domain and temporal scope.,1,3,False
+tax_on_imports_behavior,21,"Economics, Politics & Law",Definition versus giveaway context; explicit domain and temporal scope.,1,3,False
+local_government_head_behavior,21,"Economics, Politics & Law",Definition versus giveaway context; explicit domain and temporal scope.,1,3,False
+court_outcome_behavior,21,"Economics, Politics & Law",Definition versus giveaway context; explicit domain and temporal scope.,1,3,False
+market_price_mechanism_behavior,21,"Economics, Politics & Law",Definition versus giveaway context; explicit domain and temporal scope.,1,3,False
+types_of_government_behavior,21,"Economics, Politics & Law",Definition versus giveaway context; explicit domain and temporal scope.,1,3,False
+money_and_banking_behavior,21,"Economics, Politics & Law",Definition versus giveaway context; explicit domain and temporal scope.,1,3,False
+raining_cats_and_dogs_behavior,22,Idioms & Figurative Language,Figurative versus literal readings and full multi-word continuation scoring.,1,3,False
+break_a_leg_behavior,22,Idioms & Figurative Language,Figurative versus literal readings and full multi-word continuation scoring.,1,3,False
+spill_the_beans_behavior,22,Idioms & Figurative Language,Figurative versus literal readings and full multi-word continuation scoring.,1,3,False
+bite_the_bullet_behavior,22,Idioms & Figurative Language,Figurative versus literal readings and full multi-word continuation scoring.,1,3,False
+once_in_a_blue_moon_behavior,22,Idioms & Figurative Language,Figurative versus literal readings and full multi-word continuation scoring.,1,3,False
+the_ball_is_in_your_court_behavior,22,Idioms & Figurative Language,Figurative versus literal readings and full multi-word continuation scoring.,1,3,False
+cost_an_arm_and_a_leg_behavior,22,Idioms & Figurative Language,Figurative versus literal readings and full multi-word continuation scoring.,1,3,False
+kill_two_birds_with_one_stone_behavior,22,Idioms & Figurative Language,Figurative versus literal readings and full multi-word continuation scoring.,1,3,False
+under_the_weather_behavior,22,Idioms & Figurative Language,Figurative versus literal readings and full multi-word continuation scoring.,1,3,False
+hit_the_nail_on_the_head_behavior,22,Idioms & Figurative Language,Figurative versus literal readings and full multi-word continuation scoring.,1,3,False
+days_in_a_week_behavior,23,Counting & Set Facts,"Retrieved count facts versus actual counting, with changed set members and sizes.",1,3,False
+months_in_a_year_behavior,23,Counting & Set Facts,"Retrieved count facts versus actual counting, with changed set members and sizes.",1,3,False
+sides_of_shapes_behavior,23,Counting & Set Facts,"Retrieved count facts versus actual counting, with changed set members and sizes.",1,3,False
+legs_on_animals_behavior,23,Counting & Set Facts,"Retrieved count facts versus actual counting, with changed set members and sizes.",1,3,False
+letters_in_the_alphabet_behavior,23,Counting & Set Facts,"Retrieved count facts versus actual counting, with changed set members and sizes.",1,3,False
+hours_and_minutes_behavior,23,Counting & Set Facts,"Retrieved count facts versus actual counting, with changed set members and sizes.",1,3,False
+colors_and_continents_behavior,23,Counting & Set Facts,"Retrieved count facts versus actual counting, with changed set members and sizes.",1,3,False
+players_on_a_team_behavior,23,Counting & Set Facts,"Retrieved count facts versus actual counting, with changed set members and sizes.",1,3,False
+wheels_and_doors_behavior,23,Counting & Set Facts,"Retrieved count facts versus actual counting, with changed set members and sizes.",1,3,False
+set_membership_size_behavior,23,Counting & Set Facts,"Retrieved count facts versus actual counting, with changed set members and sizes.",1,3,False
+length_units_behavior,24,Units & Measurement,Unit and physical-dimension changes; test conversions and distractor units.,1,3,False
+time_units_behavior,24,Units & Measurement,Unit and physical-dimension changes; test conversions and distractor units.,1,3,False
+mass_units_behavior,24,Units & Measurement,Unit and physical-dimension changes; test conversions and distractor units.,1,3,False
+instruments_behavior,24,Units & Measurement,Unit and physical-dimension changes; test conversions and distractor units.,1,3,False
+volume_and_capacity_behavior,24,Units & Measurement,Unit and physical-dimension changes; test conversions and distractor units.,1,3,False
+speed_behavior,24,Units & Measurement,Unit and physical-dimension changes; test conversions and distractor units.,1,3,False
+temperature_scales_behavior,24,Units & Measurement,Unit and physical-dimension changes; test conversions and distractor units.,1,3,False
+area_behavior,24,Units & Measurement,Unit and physical-dimension changes; test conversions and distractor units.,1,3,False
+unit_prefixes_behavior,24,Units & Measurement,Unit and physical-dimension changes; test conversions and distractor units.,1,3,False
+everyday_estimation_behavior,24,Units & Measurement,Unit and physical-dimension changes; test conversions and distractor units.,1,3,False
+first_person_on_the_moon_behavior,25,History & Chronology,Source-checked chronology and events with name-frequency and temporal distractors.,1,3,False
+inventor_of_the_printing_press_behavior,25,History & Chronology,Source-checked chronology and events with name-frequency and temporal distractors.,1,3,False
+theory_of_evolution_behavior,25,History & Chronology,Source-checked chronology and events with name-frequency and temporal distractors.,1,3,False
+first_us_president_behavior,25,History & Chronology,Source-checked chronology and events with name-frequency and temporal distractors.,1,3,False
+inventor_of_the_telephone_behavior,25,History & Chronology,Source-checked chronology and events with name-frequency and temporal distractors.,1,3,False
+ancient_civilizations_behavior,25,History & Chronology,Source-checked chronology and events with name-frequency and temporal distractors.,1,3,False
+european_explorers_behavior,25,History & Chronology,Source-checked chronology and events with name-frequency and temporal distractors.,1,3,False
+20th_century_milestones_behavior,25,History & Chronology,Source-checked chronology and events with name-frequency and temporal distractors.,1,3,False
+scientists_and_their_fields_behavior,25,History & Chronology,Source-checked chronology and events with name-frequency and temporal distractors.,1,3,False
+leaders_and_movements_behavior,25,History & Chronology,Source-checked chronology and events with name-frequency and temporal distractors.,1,3,False

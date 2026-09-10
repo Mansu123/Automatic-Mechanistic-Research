@@ -1,0 +1,2 @@
+item_id,reviewer_id,item_type,model,angle,angle_name,behavior_id,element,rubric_version,job_sha256,localization,causal_validity,verification,generalization,faithfulness,explanation,calibration,reproducibility,evidence_notes
+<do not fill this file in; copy review/human_scores_BLANK_TEMPLATE.csv from an exported run and fill reviewer_id + the 8 integer scores; keep item_id/rubric_version/job_sha256 unchanged>,,,,,,,,,,,,,,,,,,
